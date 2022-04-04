@@ -1,0 +1,12 @@
+{
+  "./**/*.{md,yml}": [
+    "prettier --write"
+  ],
+  "./**/*.{ts,vue}": [
+    "prettier --write",
+    "eslint --fix"
+  ],
+  "./**/*.{ts,vue,md}": [
+    "cspell --config=.cspell.json \"**/*.{md,ts}\""
+  ]
+}

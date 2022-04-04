@@ -1,0 +1,11 @@
+.vite-ssg-dist
+.vite-ssg-temp
+*.local
+
+/dist
+/dist-ssr
+/node_modules
+
+/src/app/auto-imports.d.ts
+/src/app/components.d.ts
+/.eslintrc-auto-import.json
