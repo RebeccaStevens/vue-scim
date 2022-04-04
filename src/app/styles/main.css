@@ -1,4 +1,6 @@
-@import './markdown.css';
+/* @import './markdown.css'; */
+/* @import './themes'; */
+@import './q-components.css';
 
 html,
 body,
@@ -6,10 +8,18 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+  /* color: var(--text-color) */
 }
 
-html.dark {
-  background: #121212;
+html {
+  /* background: var(--background-color); */
+}
+
+#app,
+#app > .v-theme-provider {
+  display: flex;
+  min-width: 100%;
+  width: fit-content;
 }
 
 #nprogress {
@@ -17,7 +27,7 @@ html.dark {
 }
 
 #nprogress .bar {
-  background: rgb(13,148,136);
+  background: rgb(--var(--v-theme-primary));
   opacity: 0.75;
   position: fixed;
   z-index: 1031;

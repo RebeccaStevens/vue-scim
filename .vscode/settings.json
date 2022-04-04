@@ -18,12 +18,11 @@
   "i18n-ally.keystyle": "nested",
   "i18n-ally.localesPaths": "src/locales",
   "i18n-ally.sortKeys": true,
-  "prettier.enable": false,
+  "prettier.requireConfig": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true,
   },
   "files.associations": {
-    "*.css": "postcss",
     ".markdownlint.json": "jsonc",
     ".markdownlintignore": "ignore"
   },
@@ -31,7 +30,7 @@
     "typescript",
     "vue"
   ],
-  "vite.autoStart": false,
+  "vite.autoStart": true,
   "vite.port": 3000,
   "volar.formatting.printWidth": 100,
   "volar.takeOverMode.enabled": true,

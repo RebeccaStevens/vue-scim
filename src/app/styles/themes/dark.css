@@ -1,0 +1,24 @@
+@import './colors.css';
+
+:root.dark {
+  color-scheme: dark;
+
+  --color-primary: #005fbd;
+  --color-primary-rgb: 64,158,255;
+  --color-primary-0: #337ecc;
+  --color-primary-1: #0057ad;
+  --color-primary-2: #004a99;
+  --color-primary-3: #004285;
+  --color-primary-4: #003b75;
+  --color-primary-5: #003161;
+  --color-primary-6: #00254d;
+  --color-primary-7: #001b38;
+  --color-primary-8: #001224;
+  --color-primary-9: #000a14;
+
+  --background-color: var(--color-black);
+  --text-color: var(--color-white);
+  --nav-background: var(--color-dark);
+
+  --bg-color-overlay: var(--color-primary-9);
+}

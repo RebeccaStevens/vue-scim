@@ -1,13 +1,17 @@
+import { promises as fs } from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
 import ImportMetaEnvPlugin from "@import-meta-env/unplugin";
 import VueI18n from "@intlify/vite-plugin-vue-i18n";
+import { quasar, transformAssetUrls } from "@quasar/vite-plugin";
 import Vue from "@vitejs/plugin-vue";
 import LinkAttributes from "markdown-it-link-attributes";
 import Prism from "markdown-it-prism";
 import Unocss from "unocss/vite";
 import AutoImport from "unplugin-auto-import/vite";
+import { Vuetify3Resolver } from "unplugin-vue-components/resolvers";
+import type { ComponentResolver } from "unplugin-vue-components/types";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
@@ -21,6 +25,26 @@ import tsconfigPaths from "vite-tsconfig-paths";
 const markdownWrapperClasses = "prose prose-sm m-auto text-left";
 
 const dirname = path.dirname(url.fileURLToPath(import.meta.url));
+
+const nestedComponentResolver: ComponentResolver = async (name: string) => {
+  const parts = name.split("_");
+  if (parts.length <= 1) {
+    return;
+  }
+
+  const corePath = `${dirname}/src/app/components/${parts.join("/")}`;
+
+  const coreStat = await fs.stat(corePath).catch(() => undefined);
+  if (coreStat?.isDirectory()) {
+    return {
+      path: `${corePath}/index.vue`,
+    };
+  }
+
+  return {
+    path: `${corePath}.vue`,
+  };
+};
 
 export default defineConfig(({ command, mode }) => {
   console.log("Command:", command);
@@ -55,6 +79,11 @@ export default defineConfig(({ command, mode }) => {
       Vue({
         include: [/\.vue$/u, /\.md$/u],
         reactivityTransform: true,
+        template: { transformAssetUrls },
+      }),
+
+      quasar({
+        sassVariables: "src/app/styles/quasar-variables.sass",
       }),
 
       // https://github.com/hannoeru/vite-plugin-pages
@@ -78,7 +107,11 @@ export default defineConfig(({ command, mode }) => {
           "@vueuse/head",
           "@vueuse/core",
         ],
-        dts: mode === "test" ? "src/app/auto-imports.d.ts" : "app/auto-imports.d.ts",
+        resolvers: [Vuetify3Resolver()],
+        dts:
+          mode === "test"
+            ? "src/app/auto-imports.d.ts"
+            : "app/auto-imports.d.ts",
         eslintrc: {
           enabled: true,
           filepath: path.resolve(dirname, ".eslintrc-auto-import.json"),
@@ -87,12 +120,14 @@ export default defineConfig(({ command, mode }) => {
 
       // https://github.com/antfu/unplugin-vue-components
       Components({
+        resolvers: [Vuetify3Resolver(), nestedComponentResolver],
         // allow auto load markdown components under `./components/`
         extensions: ["vue", "md"],
         // allow auto import and register components used in markdown
         include: [/\.vue$/u, /\.vue\?vue/u, /\.md$/u],
         dirs: "app/components",
-        dts: mode === "test" ? "src/app/components.d.ts" : "app/components.d.ts",
+        dts:
+          mode === "test" ? "src/app/components.d.ts" : "app/components.d.ts",
       }),
 
       // https://github.com/antfu/unocss
@@ -170,7 +205,7 @@ export default defineConfig(({ command, mode }) => {
       entry: "app/main.ts",
       formatting: "minify",
       includedRoutes(paths, routes) {
-        return paths.filter((i) => !i.includes('readme'))
+        return paths.filter((i) => !i.includes("readme"));
       },
       onFinished() {
         generateSitemap();
@@ -185,5 +220,5 @@ export default defineConfig(({ command, mode }) => {
         inline: ["@vue", "@vueuse", "vue-demi"],
       },
     },
-  }
+  };
 });

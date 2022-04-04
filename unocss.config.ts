@@ -11,18 +11,18 @@ import {
 
 export default defineConfig({
   shortcuts: [
-    [
-      "btn",
-      "px-4 py-1 rounded inline-block bg-teal-600 text-white cursor-pointer hover:bg-teal-700 disabled:cursor-default disabled:bg-gray-600 disabled:opacity-50",
-    ],
-    [
-      "icon-btn",
-      "text-[0.9em] inline-block cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100 hover:text-teal-600",
-    ],
+    {
+      "icon-btn":
+        "p-2 aspect-square cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100",
+      "absolute-fill":
+        "p-2 aspect-square cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100",
+    },
   ],
   presets: [
     presetUno(),
-    presetAttributify(),
+    presetAttributify({
+      strict: true,
+    }),
     presetIcons({
       scale: 1.2,
       warn: true,
@@ -37,5 +37,13 @@ export default defineConfig({
     }),
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
-  safelist: "prose prose-sm m-auto text-left".split(" "),
+  safelist: [
+    "i-carbon-download",
+    "i-carbon-upload",
+    "i-carbon-user-avatar-filled",
+    "i-emojione-crescent-moon",
+    "i-emojione-flag-for-united-states",
+    "i-emojione-sun",
+    "i-ic-baseline-arrow-drop-down",
+  ],
 });

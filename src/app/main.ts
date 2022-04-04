@@ -1,6 +1,7 @@
 import { setupLayouts } from "virtual:generated-layouts";
 import generatedRoutes from "virtual:generated-pages";
 import { ViteSSG } from "vite-ssg";
+import "quasar/src/css/index.sass";
 
 import App from "./App.vue";
 

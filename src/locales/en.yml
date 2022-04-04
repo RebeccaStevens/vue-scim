@@ -1,14 +1,81 @@
-button:
-  about: About
-  back: Back
-  go: GO
-  home: Home
-  toggle_dark: Toggle dark mode
-  toggle_langs: Change languages
-intro:
-  desc: Opinionated Vite Starter Template
-  dynamic-route: Demo of dynamic route
-  hi: Hi, {name}!
-  aka: Also known as
-  whats-your-name: What's your name?
+navigation:
+  back:
+    label: Back
+
+  pages:
+    home:
+      label: Home
+
+    planners:
+      label: Planners
+      submenu:
+        production:
+          label: Production planner
+        power:
+          label: Power planner
+
+    interactive-map:
+      label: Interactive Map
+
+    game-resources:
+      label: Game Resources
+      submenu:
+        buildings:
+          label: Buildings
+        architecture:
+          label: Architecture
+        structures:
+          label: Structures
+        items:
+          label: Items
+        tools:
+          label: Tools
+        vehicles:
+          label: Vehicles
+        fauna:
+          label: Fauna
+        statuses:
+          label: Statuses
+        ficsmas:
+          label: FICSMAS Holiday Event
+
+    game-progression:
+      label: Game Progression
+      submenu:
+        milestones:
+          label: Milestones
+        mam:
+          label: M.A.M.
+        awesome-shop:
+          label: AWESOME Shop
+        tetromino:
+          label: FICSIT Productive Packer Deluxe | World Leaderboard
+
+    blueprints:
+      label: Blueprints
+
+    workbench:
+      label: Workbench
+      submenu:
+        mods:
+          label: Mods
+        color:
+          label: Color converter
+        hard-drives:
+          label: Hard Drives
+        balancers:
+          label: Balancers
+
+dark-mode:
+  button:
+    toggle:
+      title: Toggle dark mode
+
+language:
+  button:
+    change:
+      title: Change language
+    set:
+      title: Change language to {language}
+
 not-found: Not found

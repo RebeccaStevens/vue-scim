@@ -30,6 +30,7 @@ module.exports = {
     "vue/setup-compiler-macros": true,
   },
   rules: {
+    "@typescript-eslint/no-empty-function": "warn",
     // @see https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1788
     "unicorn/no-array-for-each": "off",
     // Incompatible with too many built in types
@@ -53,7 +54,20 @@ module.exports = {
       },
     },
     {
-      files: ["src/app/layouts/**/*.vue"],
+      files: ["src/**"],
+      rules: {
+        "node/prefer-global/console": "off",
+        "unicorn/prefer-node-protocol": "off",
+      }
+    },
+    {
+      files: ["src/app/main.ts", "src/app/modules/**/*"],
+      rules: {
+        "import/no-extraneous-dependencies": "off",
+      },
+    },
+    {
+      files: ["src/app/layouts/**/*.vue", "src/app/pages/**/*.vue"],
       rules: {
         "vue/multi-word-component-names": "off",
       },
@@ -62,12 +76,6 @@ module.exports = {
       files: ["**/*.vue", "**/*.test.ts"],
       rules: {
         "unicorn/filename-case": "off",
-      },
-    },
-    {
-      files: ["src/app/main.ts", "src/app/modules/**/*"],
-      rules: {
-        "import/no-extraneous-dependencies": "off",
       },
     },
     {
