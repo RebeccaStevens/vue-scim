@@ -1,0 +1,11 @@
+* text=auto eol=lf
+
+/.husky/* linguist-detectable=false
+*.js linguist-detectable=false
+*.cjs linguist-detectable=false
+*.mjs linguist-detectable=false
+
+.markdownlint.json linguist-language=jsonc
+.vscode/*.json linguist-language=jsonc
+tsconfig.json linguist-language=jsonc
+tsconfig.*.json linguist-language=jsonc

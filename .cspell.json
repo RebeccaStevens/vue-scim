@@ -1,0 +1,81 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "ignorePaths": [
+    "**/coverage/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/**/CHANGELOG.md",
+    "**/*.{json}",
+    ".cspell.json",
+    "yarn.lock",
+    ".github/workflows/**",
+    ".vscode/*.json"
+  ],
+  "dictionaries": [
+    "typescript",
+    "softwareTerms",
+    "node",
+    "en_US",
+    "npm",
+    "misc",
+    "filetypes"
+  ],
+  "ignoreRegExpList": [
+    "/```[\\w\\W]*?```/",
+    "/~~~[\\w\\W]*?~~~/",
+    "/``[\\w\\W]*?``/",
+    "/`[^`]*`/",
+    "/\\.\\/docs\\/rules\\/[^.]*.md/",
+    "/TS[^\\s]+/",
+    "\\(#.+?\\)",
+    "// @ts-.*",
+    "/[A-Za-z0-9]{32,}/"
+  ],
+  "words": [
+    "callbag",
+    "scim",
+    "antfu",
+    "demi",
+    "iconify",
+    "intlify",
+    "pinia",
+    "pnpm",
+    "unocss",
+    "unplugin",
+    "vetur",
+    "Vite",
+    "vitejs",
+    "Vitesse",
+    "vitest",
+    "vueuse",
+    "litecoin",
+    "monero",
+    "foo",
+    "bar",
+    "baz",
+    "qux",
+    "quux",
+    "corge",
+    "grault",
+    "garply",
+    "waldo",
+    "fred",
+    "plugh",
+    "xyzzy",
+    "thud"
+  ],
+  "overrides": [
+    {
+      "filename": "**/*.{ts,js}",
+      "ignoreRegExpList": [
+        "/@[a-z]+/",
+        "/#(end)?region/"
+      ],
+      "includeRegExpList": [
+        "/\\/\\*[\\s\\S]*?\\*\\/|([^\\\\:]|^)\\/\\/.*$/",
+        "/(\\/\\/[^\\n\\r]*[\\n\\r]+)/"
+      ]
+    }
+  ]
+}

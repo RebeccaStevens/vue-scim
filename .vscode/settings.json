@@ -1,0 +1,34 @@
+{
+  "files.exclude": {
+    ".nyc_output/": true,
+    "coverage/": true,
+    "**/.vite-ssg-temp": true,
+  },
+  "files.trimTrailingWhitespace": true,
+  "search.exclude": {
+    ".vscode/": true,
+    "**/.git/": true,
+    "**/.nyc_output/": true,
+    "**/.pnp.*": true,
+    "**/.vite-ssg-dist": true,
+    "**/.vite-ssg-temp": true,
+    "dist/": true,
+  },
+  "i18n-ally.sourceLanguage": "en",
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.localesPaths": "src/locales",
+  "i18n-ally.sortKeys": true,
+  "prettier.enable": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+  },
+  "files.associations": {
+    "*.css": "postcss",
+    ".markdownlint.json": "jsonc",
+    ".markdownlintignore": "ignore"
+  },
+  "eslint.validate": [
+    "typescript",
+    "vue"
+  ],
+}
