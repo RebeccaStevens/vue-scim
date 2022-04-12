@@ -18,13 +18,20 @@ export default defineConfig({
         "p-2 aspect-square cursor-pointer select-none opacity-75 transition duration-200 ease-in-out hover:opacity-100",
     },
   ],
+  rules: [
+    [
+      "display-none",
+      {
+        display: "none !important",
+      },
+    ],
+  ],
   presets: [
     presetUno(),
     presetAttributify({
       strict: true,
     }),
     presetIcons({
-      scale: 1.2,
       warn: true,
     }),
     presetTypography(),
@@ -38,12 +45,16 @@ export default defineConfig({
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   safelist: [
+    "i-carbon-analytics",
     "i-carbon-download",
     "i-carbon-upload",
     "i-carbon-user-avatar-filled",
+    "i-clarity-flask-solid",
     "i-emojione-crescent-moon",
     "i-emojione-flag-for-united-states",
     "i-emojione-sun",
     "i-ic-baseline-arrow-drop-down",
+    "i-ic-play-arrow",
+    "i-fa6-solid-gears",
   ],
 });

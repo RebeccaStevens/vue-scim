@@ -7,5 +7,7 @@
 /node_modules
 
 /src/app/auto-imports.d.ts
-/src/app/components.d.ts
+/src/app/auto-imports-components.d.ts
 /.eslintrc-auto-import.json
+
+/src/public/img/

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-const { t } = useI18n();
+// import {} from "./leaflet-map";
 </script>
 
 <template>
-  <div class="host">Map</div>
+  <div class="game-map">
+    <LeafletMap />
+  </div>
 </template>
 
 <style scoped>
-.host {
-  background-color: #888888;
+.game-map {
 }
 </style>

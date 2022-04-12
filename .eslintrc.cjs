@@ -12,7 +12,7 @@ module.exports = {
     "plugin:vue/vue3-essential",
     "@vue/eslint-config-typescript/recommended",
     "@vue/eslint-config-prettier",
-    './.eslintrc-auto-import.json',
+    "./.eslintrc-auto-import.json",
   ],
   parserOptions: {
     tsconfigRootDir: __dirname,
@@ -23,7 +23,7 @@ module.exports = {
     "/dist/",
     "/src/public",
     "/src/app/auto-imports.d.ts",
-    "/src/app/components.d.ts",
+    "/src/app/auto-imports-components.d.ts",
     "/**/*.md",
   ],
   env: {
@@ -31,6 +31,18 @@ module.exports = {
   },
   rules: {
     "@typescript-eslint/no-empty-function": "warn",
+    "import/no-useless-path-segments": [
+      "error",
+      {
+        noUselessIndex: true,
+      },
+    ],
+    "vue/multi-word-component-names": [
+      "error",
+      {
+        ignores: ["index"],
+      },
+    ],
     // @see https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1788
     "unicorn/no-array-for-each": "off",
     // Incompatible with too many built in types
@@ -58,7 +70,7 @@ module.exports = {
       rules: {
         "node/prefer-global/console": "off",
         "unicorn/prefer-node-protocol": "off",
-      }
+      },
     },
     {
       files: ["src/app/main.ts", "src/app/modules/**/*"],
@@ -81,7 +93,7 @@ module.exports = {
     {
       files: ["./*", "./**/*.md/**", "./cypress/**/*"],
       parserOptions: {
-        project: null
+        project: null,
       },
       rules: {
         "@typescript-eslint/await-thenable": "off",
@@ -152,8 +164,8 @@ module.exports = {
         "dot-notation": "error",
         "no-implied-eval": "error",
         "require-await": "error",
-      }
-    }
+      },
+    },
   ],
   settings: {
     "import/parsers": {
@@ -161,6 +173,9 @@ module.exports = {
       "@typescript-eslint/parser": [".ts"],
     },
     "import/resolver": {
+      node: {
+        extensions: [".ts"],
+      },
       typescript: {
         project,
       },

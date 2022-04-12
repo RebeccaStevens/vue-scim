@@ -1,6 +1,6 @@
 import { createPinia } from "pinia";
 
-import type { UserModule } from "~/app/module-types";
+import type { UserModule } from "~/module-types";
 
 // Setup Pinia
 // https://pinia.esm.dev/

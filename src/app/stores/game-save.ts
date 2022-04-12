@@ -1,7 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 export const useGameSaveStore = defineStore("game-save", () => {
-  const hasGameSave = ref(false);
+  const hasGameSave = ref(true);
 
   return {
     hasGameSave,

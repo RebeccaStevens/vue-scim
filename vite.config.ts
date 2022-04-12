@@ -1,4 +1,3 @@
-import { promises as fs } from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
@@ -10,8 +9,7 @@ import LinkAttributes from "markdown-it-link-attributes";
 import Prism from "markdown-it-prism";
 import Unocss from "unocss/vite";
 import AutoImport from "unplugin-auto-import/vite";
-import { Vuetify3Resolver } from "unplugin-vue-components/resolvers";
-import type { ComponentResolver } from "unplugin-vue-components/types";
+import { QuasarResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import Inspect from "vite-plugin-inspect";
@@ -26,32 +24,18 @@ const markdownWrapperClasses = "prose prose-sm m-auto text-left";
 
 const dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
-const nestedComponentResolver: ComponentResolver = async (name: string) => {
-  const parts = name.split("_");
-  if (parts.length <= 1) {
-    return;
-  }
-
-  const corePath = `${dirname}/src/app/components/${parts.join("/")}`;
-
-  const coreStat = await fs.stat(corePath).catch(() => undefined);
-  if (coreStat?.isDirectory()) {
-    return {
-      path: `${corePath}/index.vue`,
-    };
-  }
-
-  return {
-    path: `${corePath}.vue`,
-  };
-};
-
 export default defineConfig(({ command, mode }) => {
   console.log("Command:", command);
   console.log("Mode:   ", mode);
 
   return {
     root: "src",
+
+    // resolve: {
+    //   alias: {
+    //     vue: "vue/dist/vue.esm-bundler",
+    //   },
+    // },
 
     build: {
       outDir: path.resolve(dirname, "dist"),
@@ -80,6 +64,9 @@ export default defineConfig(({ command, mode }) => {
         include: [/\.vue$/u, /\.md$/u],
         reactivityTransform: true,
         template: { transformAssetUrls },
+        script: {
+          babelParserPlugins: ["importAssertions"],
+        },
       }),
 
       quasar({
@@ -89,11 +76,13 @@ export default defineConfig(({ command, mode }) => {
       // https://github.com/hannoeru/vite-plugin-pages
       Pages({
         dirs: "app/pages",
+        exclude: ["**/README.md"],
         extensions: ["vue", "md"],
       }),
 
       // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
       Layouts({
+        exclude: ["**/README.md"],
         layoutsDirs: "app/layouts",
       }),
 
@@ -107,7 +96,7 @@ export default defineConfig(({ command, mode }) => {
           "@vueuse/head",
           "@vueuse/core",
         ],
-        resolvers: [Vuetify3Resolver()],
+        resolvers: [QuasarResolver()],
         dts:
           mode === "test"
             ? "src/app/auto-imports.d.ts"
@@ -120,14 +109,16 @@ export default defineConfig(({ command, mode }) => {
 
       // https://github.com/antfu/unplugin-vue-components
       Components({
-        resolvers: [Vuetify3Resolver(), nestedComponentResolver],
+        resolvers: [QuasarResolver()],
         // allow auto load markdown components under `./components/`
         extensions: ["vue", "md"],
         // allow auto import and register components used in markdown
         include: [/\.vue$/u, /\.vue\?vue/u, /\.md$/u],
         dirs: "app/components",
         dts:
-          mode === "test" ? "src/app/components.d.ts" : "app/components.d.ts",
+          mode === "test"
+            ? "src/app/auto-imports-components.d.ts"
+            : "app/auto-imports-components.d.ts",
       }),
 
       // https://github.com/antfu/unocss
@@ -157,25 +148,25 @@ export default defineConfig(({ command, mode }) => {
       // https://github.com/antfu/vite-plugin-pwa
       VitePWA({
         registerType: "autoUpdate",
-        includeAssets: ["favicon.svg", "safari-pinned-tab.svg"],
+        includeAssets: ["img/favicon.icon"],
         manifest: {
-          name: "Vitesse",
-          short_name: "Vitesse",
+          name: "SC",
+          short_name: "SC",
           theme_color: "#ffffff",
           icons: [
             {
-              src: "/pwa-192x192.png",
-              sizes: "192x192",
+              src: "img/favicons-16x16.png",
+              sizes: "16x16",
               type: "image/png",
             },
             {
-              src: "/pwa-512x512.png",
-              sizes: "512x512",
+              src: "img/favicons-32x32.png",
+              sizes: "32x32",
               type: "image/png",
             },
             {
-              src: "/pwa-512x512.png",
-              sizes: "512x512",
+              src: "img/favicons-92x92.png",
+              sizes: "92x92",
               type: "image/png",
               purpose: "any maskable",
             },

@@ -1,12 +1,12 @@
 <template>
-  <div class="host">
+  <div class="page-map">
     <GameMap class="game-map" />
-    <GameMap_SideBar class="side-bar" />
+    <Controls class="controls" />
   </div>
 </template>
 
 <style scoped>
-.host {
+.page-map {
   display: flex;
   height: 100%;
   column-gap: 1.5rem;
@@ -20,7 +20,7 @@
   flex-basis: 75%;
 }
 
-.side-bar {
+.controls {
   margin: 0;
   flex-grow: 1;
   flex-basis: 25%;

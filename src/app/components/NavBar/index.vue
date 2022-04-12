@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { isDark, useLanguages } from "~/app/composables";
+import { isDark, useLanguages } from "~/composables";
 
 import { useMainMenu } from "./main-menu";
 

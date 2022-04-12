@@ -1,6 +1,6 @@
 import { createI18n } from "vue-i18n";
 
-import type { UserModule } from "~/app/module-types";
+import type { UserModule } from "~/module-types";
 
 // Import i18n resources
 // https://vitejs.dev/guide/features.html#glob-import

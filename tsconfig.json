@@ -14,6 +14,7 @@
     "resolveJsonModule": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
+    "jsx": "preserve",
     "types": [
       "vite/client",
       "vue/ref-macros",
@@ -21,18 +22,24 @@
       "vite-plugin-vue-layouts/client"
     ],
     "baseUrl": "./src",
+    "rootDirs": [
+      "./",
+      "./public",
+    ],
     "paths": {
-      "~/app/*": [
-        "app/*"
-      ],
       "~/workers/*": [
         "workers/*"
+      ],
+      "~/*": [
+        "app/*/index.vue",
+        "app/*.vue",
+        "app/*"
       ],
     }
   },
   "exclude": [
     "dist",
     "node_modules",
-    "cypress"
+    "cypress",
   ]
 }
