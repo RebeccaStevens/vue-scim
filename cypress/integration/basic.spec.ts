@@ -3,27 +3,14 @@ context("Basic", () => {
     cy.visit("/");
   });
 
-  it("basic nav", () => {
+  it("should be on the home page", () => {
     cy.url().should("eq", "http://localhost:5050/");
-
-    cy.contains("[Home Layout]").should("exist");
-
-    cy.get("#input")
-      .type("Vitesse{Enter}")
-      .url()
-      .should("eq", "http://localhost:5050/hi/Vitesse");
-
-    cy.contains("[Default Layout]").should("exist");
-
-    cy.get("[btn]").click().url().should("eq", "http://localhost:5050/");
   });
 
-  it("markdown", () => {
-    cy.get('[title="About"]')
+  it("should be able to naviagate to the interactive map", () => {
+    cy.get('.menu-item[href="/interactive-map"]')
       .click()
       .url()
-      .should("eq", "http://localhost:5050/about");
-
-    cy.get("pre.language-js").should("exist");
+      .should("eq", "http://localhost:5050/interactive-map");
   });
 });
