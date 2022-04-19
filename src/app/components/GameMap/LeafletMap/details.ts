@@ -1,6 +1,7 @@
 import L from "leaflet";
 import type { ReadonlyDeep } from "type-fest";
 
+import type { GamePointTuple } from "~/components/GameMap/types";
 import icons from "~/icons";
 import { getOrCreateMapElement } from "~/utils";
 
@@ -89,10 +90,14 @@ type Marker = ReadonlyDeep<{
   z: number;
 }>;
 
-type POIs = ReadonlyDeep<{
+type LayerEntity = ReadonlyDeep<{
   layerId: string;
-  markers: Marker[];
 }>;
+
+type POIs = LayerEntity &
+  ReadonlyDeep<{
+    markers: Marker[];
+  }>;
 
 type SpawnLocations = POIs &
   ReadonlyDeep<{
@@ -100,6 +105,12 @@ type SpawnLocations = POIs &
     markers: Array<{
       radius: number;
     }>;
+  }>;
+
+type WorldBorder = LayerEntity &
+  ReadonlyDeep<{
+    layerId: "worldBorder";
+    polygon: GamePointTuple[];
   }>;
 
 type LabeledPOIs = POIs &
@@ -278,7 +289,7 @@ function setupPOIs(
       );
 
       // TODO: remove
-      map.addLayer(layerGroup);
+      // map.addLayer(layerGroup);
 
       const currentMarkerOptions = { icon: mapIcon, riseOnHover: true };
 
@@ -301,18 +312,20 @@ function setupButtons(
   mapIcons: Map<string, L.DivIcon>
 ) {
   for (const button of buttons.options) {
-    for (const poi of button.options) {
+    for (const entity of button.options) {
       const layerGroup = getOrCreateMapElement(
         layers,
-        poi.layerId,
+        entity.layerId,
         L.layerGroup
       );
 
       // TODO: remove
-      // map.addLayer(layerGroup);
+      map.addLayer(layerGroup);
 
-      if (isSpawnLocations(poi)) {
-        setupSpawnLocations(poi, map, layerGroup);
+      if (isSpawnLocations(entity)) {
+        setupSpawnLocations(entity, map, layerGroup);
+      } else if (isWorldBorder(entity)) {
+        setupWorldBorder(entity, map, layerGroup);
       }
     }
   }
@@ -328,6 +341,21 @@ function setupSpawnLocations(
       radius: convertToMapUnit(marker.radius),
     }).addTo(layerGroup);
   }
+}
+
+function setupWorldBorder(
+  border: WorldBorder,
+  map: L.Map,
+  layerGroup: L.LayerGroup
+) {
+  L.polyline(
+    border.polygon.map((point) => mapUtils.unproject(map, point)),
+    {
+      color: "red",
+      weight: 3,
+      interactive: false,
+    }
+  ).addTo(layerGroup);
 }
 
 function isResourceNodesCatergory(
@@ -370,6 +398,10 @@ function isCatergoryButtons(category: Catergory): category is CatergoryButtons {
   return category.tabId === undefined && category.button;
 }
 
-function isSpawnLocations(poi: POIs): poi is SpawnLocations {
-  return poi.layerId === "spawn";
+function isSpawnLocations(entity: LayerEntity): entity is SpawnLocations {
+  return entity.layerId === "spawn";
+}
+
+function isWorldBorder(entity: LayerEntity): entity is WorldBorder {
+  return entity.layerId === "worldBorder";
 }

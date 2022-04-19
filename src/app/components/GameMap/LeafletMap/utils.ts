@@ -1,8 +1,9 @@
 import L from "leaflet";
+import type { ReadonlyDeep } from "type-fest";
+
+import type { GamePointTuple } from "~/components/GameMap/types";
 
 import * as gameMap from "./gameMap";
-
-type GamePointTuple = [x: number, y: number];
 
 export const tileSize = 256;
 
@@ -28,7 +29,7 @@ export function unpauseMap(map: L.Map) {
   map.boxZoom.enable();
 }
 
-export function unproject(map: L.Map, point: GamePointTuple) {
+export function unproject(map: L.Map, point: ReadonlyDeep<GamePointTuple>) {
   return unprojectMapPoint(map, convertToMapPoint(point));
 }
 
@@ -54,7 +55,9 @@ export function getCenter(map: L.Map) {
   return map.unproject([fullSize / 2, fullSize / 2], zoomRatio);
 }
 
-export function convertToMapPoint(point: GamePointTuple): L.PointTuple {
+export function convertToMapPoint(
+  point: ReadonlyDeep<GamePointTuple>
+): L.PointTuple {
   return [
     convertToMapUnit(point[0] + gameMap.centerX),
     convertToMapUnit(point[1] + gameMap.centerY),
