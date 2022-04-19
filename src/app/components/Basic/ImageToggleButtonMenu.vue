@@ -1,6 +1,7 @@
 <script setup lang="ts">
 type Node = {
-  imgSrc: string;
+  imgSrc?: string;
+  imgSrcSet?: string;
   title?: string;
   children?: ReadonlyArray<Node>;
 };
@@ -15,7 +16,12 @@ const largeMenuSize = 25;
 <template>
   <QMenuHover>
     <template #default="{ activatorAttr, menuAttr }">
-      <ImageToggleButton :src="node.imgSrc" :title="node.title" v-bind="activatorAttr">
+      <ImageToggleButton
+        :src="node.imgSrc"
+        :srcSet="node.imgSrcSet"
+        :title="node.title"
+        v-bind="activatorAttr"
+      >
         <q-menu
           v-if="(node?.children?.length ?? 0) > 0"
           v-bind="menuAttr"

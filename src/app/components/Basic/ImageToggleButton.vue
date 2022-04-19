@@ -2,7 +2,8 @@
 const checked = ref(false);
 
 defineProps<{
-  src: string;
+  src?: string;
+  srcSet?: string;
   title?: string;
 }>();
 </script>
@@ -10,7 +11,7 @@ defineProps<{
 <template>
   <q-item tag="label" dense :class="{ node: true, checked }" :title="title">
     <q-checkbox display-none v-model="checked" />
-    <q-img :src="src" loading="lazy" ratio="1" fit="contain" />
+    <q-img :srcset="srcSet" ratio="1" fit="contain" />
     <slot></slot>
   </q-item>
 </template>

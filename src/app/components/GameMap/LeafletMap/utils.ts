@@ -1,13 +1,14 @@
-import type L from "leaflet";
+import L from "leaflet";
 
 import * as gameMap from "./gameMap";
 
 type GamePointTuple = [x: number, y: number];
 
 export const tileSize = 256;
-export const zoomRatio = Math.ceil(
-  Math.log(gameMap.size / tileSize) / Math.log(2)
-);
+
+// The width of the map at zoom 1 in pixels.
+const fullSize = 4 * tileSize;
+const zoomRatio = 1;
 
 export function pauseMap(map: L.Map) {
   map.dragging.disable();
@@ -39,30 +40,30 @@ export function project(map: L.Map, latLng: L.LatLngExpression) {
   return map.project(latLng, zoomRatio);
 }
 
-export function getBounds(map: L.Map): L.LatLngBoundsLiteral {
-  const southWest = unprojectMapPoint(map, [0, gameMap.size]);
-  const northEast = unprojectMapPoint(map, [gameMap.size, 0]);
+export function getBounds(map: L.Map) {
+  const southWest = unprojectMapPoint(map, [0, fullSize]);
+  const northEast = unprojectMapPoint(map, [fullSize, 0]);
 
-  return [
+  return new L.LatLngBounds(
     [southWest.lat, southWest.lng],
-    [northEast.lat, northEast.lng],
-  ];
+    [northEast.lat, northEast.lng]
+  );
 }
 
 export function getCenter(map: L.Map) {
-  return map.unproject([gameMap.size / 2, gameMap.size / 2], zoomRatio);
+  return map.unproject([fullSize / 2, fullSize / 2], zoomRatio);
 }
 
 export function convertToMapPoint(point: GamePointTuple): L.PointTuple {
   return [
-    ((gameMap.centerX + point[0]) * gameMap.size) / gameMap.width,
-    ((gameMap.centerY + point[1]) * gameMap.size) / gameMap.height,
+    ((point[0] + gameMap.centerX) * fullSize) / gameMap.width,
+    ((point[1] + gameMap.centerY) * fullSize) / gameMap.height,
   ];
 }
 
 export function convertToGamePoint(point: L.PointTuple): GamePointTuple {
   return [
-    (point[0] * gameMap.width) / gameMap.size - gameMap.centerX,
-    (point[1] * gameMap.height) / gameMap.size - gameMap.centerY,
+    (point[0] * gameMap.width) / fullSize - gameMap.centerX,
+    (point[1] * gameMap.height) / fullSize - gameMap.centerY,
   ];
 }

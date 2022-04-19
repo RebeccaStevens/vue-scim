@@ -3,8 +3,8 @@ import { createMap } from "./map";
 
 const mapVersion = "EarlyAccess" as const;
 
-function setupMap() {
-  const mapData = createMap("leaflet-game-map-container", mapVersion);
+async function setupMap() {
+  const mapData = await createMap("leaflet-game-map-container", mapVersion);
 }
 
 onMounted(setupMap);
@@ -18,5 +18,20 @@ onMounted(setupMap);
 #leaflet-game-map-container {
   width: 100%;
   height: 100%;
+}
+</style>
+
+<style>
+/**
+ * Workaround for 1px lines appearing in some browsers due to fractional transforms and resulting anti-aliasing.
+ * @see https://github.com/Leaflet/Leaflet/issues/3575
+ */
+@supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+  .leaflet-pan-animated .leaflet-tile[style*="width: 256px"],
+  .leaflet-zoom-animated .leaflet-tile[style*="width: 256px"] {
+    width: 256.5px !important;
+    height: 256.5px !important;
+    mix-blend-mode: darken;
+  }
 }
 </style>

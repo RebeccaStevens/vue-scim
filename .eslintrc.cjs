@@ -24,6 +24,7 @@ module.exports = {
     "/src/public",
     "/src/app/auto-imports.d.ts",
     "/src/app/auto-imports-components.d.ts",
+    "/src/app/raw/img/icons/**/index.ts",
     "/**/*.md",
   ],
   env: {
@@ -47,9 +48,6 @@ module.exports = {
     "unicorn/no-array-for-each": "off",
     // Incompatible with too many built in types
     "@typescript-eslint/prefer-readonly-parameter-types": "off",
-    // Too many false possitives.
-    "promise/always-return": "off",
-    "promise/prefer-await-to-callbacks": "off",
     "import/default": "off",
     "import/no-relative-parent-imports": "off",
     "import/no-unassigned-import": "off",
@@ -82,6 +80,12 @@ module.exports = {
       files: ["src/app/layouts/**/*.vue", "src/app/pages/**/*.vue"],
       rules: {
         "vue/multi-word-component-names": "off",
+      },
+    },
+    {
+      files: ["src/app/raw/**/*.ts"],
+      rules: {
+        "import/no-duplicates": "off",
       },
     },
     {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { icons as images } from "~/raw/img";
 import { useGameSaveStore } from "~/stores/game-save";
 
 const { t } = useI18n();
@@ -13,19 +14,19 @@ const nodes = [
     children: [
       {
         title: "Foundations",
-        imgSrc: "img/gameUpdate5/IconDesc_FicsitFoundation4m.png",
+        imgSrcSet: images.gameUpdate5.IconDesc_FicsitFoundation4m,
         children: [
           {
             title: "Foundation 1m",
-            imgSrc: "img/gameUpdate5/IconDesc_FicsitFoundation1m.png",
+            imgSrcSet: images.gameUpdate5.IconDesc_FicsitFoundation1m,
           },
           {
             title: "Foundation 2m",
-            imgSrc: "img/gameUpdate5/IconDesc_FicsitFoundation2m.png",
+            imgSrcSet: images.gameUpdate5.IconDesc_FicsitFoundation2m,
           },
           {
             title: "Foundation 4m",
-            imgSrc: "img/gameUpdate5/IconDesc_FicsitFoundation4m.png",
+            imgSrcSet: images.gameUpdate5.IconDesc_FicsitFoundation4m,
           },
         ],
       },

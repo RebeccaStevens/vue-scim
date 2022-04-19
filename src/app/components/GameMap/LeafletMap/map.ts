@@ -3,13 +3,14 @@
 import L from "leaflet";
 
 import "leaflet/dist/leaflet.css";
+
 import { loadDetails } from "./details";
 import { getBounds, tileSize } from "./utils";
 
 export type MapData = Readonly<{
   map: L.Map;
   layers: Map<MapVersionName[number], L.TileLayer>;
-  bounds: L.LatLngBoundsLiteral;
+  bounds: L.LatLngBoundsExpression;
   state: {
     layer: L.Layer;
   };
@@ -24,10 +25,10 @@ const mapVersions = {
 } as const;
 
 const zoomOptions = {
-  min: 3,
-  max: 12,
-  minNative: 3,
-  maxNative: 8,
+  min: 0.5,
+  max: 10,
+  minNative: 1,
+  maxNative: 6,
   delta: 0.25,
   snap: 0.25,
 };
@@ -124,7 +125,7 @@ export function setMapLayer(mapData: MapData, layerName: MapLayerName) {
  */
 function setupMapVersion(map: L.Map, version: MapVersionName) {
   const bounds = getBounds(map);
-  map.setMaxBounds(bounds);
+  map.setMaxBounds(bounds.pad(0.1));
   map.fitBounds(bounds);
 
   const layers = setupMapLayers(version, bounds);
@@ -160,44 +161,9 @@ function setupMapLayers(
   return new Map(
     mapVersions[version].map((layer) => [
       layer,
-      L.tileLayer(`/img/map/${version}/${layer}/{z}/{x}-{y}.png`, options),
+      L.tileLayer(`/img/map/${version}/${layer}/{z}/{x}/{y}.webp`, options),
     ])
   );
 }
 
 /* eslint-enable unicorn/no-array-method-this-argument */
-/* eslint-disable
-  @typescript-eslint/restrict-plus-operands,
-  @typescript-eslint/no-unsafe-assignment,
-  @typescript-eslint/no-explicit-any,
-  @typescript-eslint/no-unsafe-member-access,
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-shadow
-*/
-/*
- * Workaround for 1px lines appearing in some browsers due to fractional transforms
- * and resulting anti-aliasing.
- * https://github.com/Leaflet/Leaflet/issues/3575
- */
-(function tileSpaceHack() {
-  // @ts-expect-error Not typed.
-  const originalInitTile = L.GridLayer.prototype._initTile;
-  L.GridLayer.include({
-    _initTile(tile: any) {
-      originalInitTile.call(this, tile);
-
-      const tileSize = this.getTileSize();
-
-      tile.style.width = `${tileSize.x + 1}px`;
-      tile.style.height = `${tileSize.y + 1}px`;
-    },
-  });
-})();
-/* eslint-enable
-  @typescript-eslint/restrict-plus-operands,
-  @typescript-eslint/no-unsafe-assignment,
-  @typescript-eslint/no-explicit-any,
-  @typescript-eslint/no-unsafe-member-access,
-  @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-shadow
-*/
