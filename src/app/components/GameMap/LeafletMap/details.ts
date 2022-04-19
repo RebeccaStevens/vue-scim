@@ -1,10 +1,12 @@
 import L from "leaflet";
 import type { ReadonlyDeep } from "type-fest";
 
+import icons from "~/icons";
 import { getOrCreateMapElement } from "~/utils";
 
 import type { MapVersionName } from "./map";
 import * as mapUtils from "./utils";
+import { convertToMapUnit } from "./utils";
 
 type MapDetailsData = ReadonlyDeep<{
   options: Catergory[];
@@ -128,7 +130,7 @@ type ResourcesData = LabeledPOIs &
   }>;
 
 const svgIconMarker =
-  '<svg viewBox="0 0 50 80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><line x1="25" y1="40" x2="47" y2="77" stroke="{outsideColor}" stroke-width="2" /><circle cx="47" cy="77" r="3" fill="{outsideColor}" /><circle cx="25" cy="25" r="24" fill="{insideColor}" stroke="{outsideColor}" stroke-width="2" /><image x="7" y="7" width="36" height="36" xlink:href="{iconImage}" /></g></svg>';
+  '<svg viewBox="0 0 50 80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><line x1="25" y1="40" x2="47" y2="77" stroke="{outsideColor}" stroke-width="2"/><circle cx="47" cy="77" r="3" fill="{outsideColor}"/><circle cx="23" cy="23" r="22.5" fill="{insideColor}" stroke="{outsideColor}" stroke-width="2"/><foreignObject x="8" y="8" width="32" height="32" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><img srcset="{iconImageSrcSet}" style="max-width: 100% !important" /></foreignObject></g></svg>';
 const svgExtraIconMarker =
   '<svg viewBox="0 0 50 80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><line x1="25" y1="40" x2="47" y2="77" stroke="{outsideColor}" stroke-width="2" /><circle cx="47" cy="77" r="3" fill="{outsideColor}" /><circle cx="25" cy="25" r="24" fill="{insideColor}" stroke="{outsideColor}" stroke-width="2" /><image x="7" y="7" width="36" height="36" xlink:href="{iconImage}" /><image x="30" y="30" width="24" height="24" xlink:href="{extraImage}" /></g></svg>';
 
@@ -139,28 +141,27 @@ const svgExtraIconMarker =
  * @param mapVersion - The version of the map to load the details of.
  */
 export async function loadDetails(map: L.Map, mapVersion: MapVersionName) {
-  const { default: details } = (await import(
-    `./gameMap/${mapVersion}/details.json`
-  )) as { default: MapDetailsData };
+  const request = await fetch(`/data/map/${mapVersion}/details.json`);
+  const details = await request.json();
 
   const layers = new Map<string, L.LayerGroup>();
-  const icons = new Map<string, L.DivIcon>();
+  const mapIcons = new Map<string, L.DivIcon>();
 
   for (const category of details.options) {
     if (isResourceNodesCatergory(category)) {
-      setupResourceNodes(category, map, layers, icons);
+      setupResourceNodes(category, map, layers, mapIcons);
     } else if (isResourceWellsCatergory(category)) {
-      setupResourceWells(category, map, layers, icons);
+      setupResourceWells(category, map, layers, mapIcons);
     } else if (isCatergoryPowerSlugs(category)) {
-      setupPowerSlugs(category, map, layers, icons);
+      setupPowerSlugs(category, map, layers, mapIcons);
     } else if (isCatergoryDropPods(category)) {
-      setupDropPods(category, map, layers, icons);
+      setupDropPods(category, map, layers, mapIcons);
     } else if (isCatergoryArtifacts(category)) {
-      setupArtifacts(category, map, layers, icons);
+      setupArtifacts(category, map, layers, mapIcons);
     } else if (isCatergoryCollectibles(category)) {
-      setupCollectibles(category, map, layers, icons);
+      setupCollectibles(category, map, layers, mapIcons);
     } else if (isCatergoryButtons(category)) {
-      setupButtons(category, map, layers, icons);
+      setupButtons(category, map, layers, mapIcons);
     } else {
       console.error("Unknown Point of Interest Category", category);
     }
@@ -173,32 +174,32 @@ function setupResourceNodes(
   category: CatergoryResourceNodes,
   map: L.Map,
   layers: Map<string, L.LayerGroup>,
-  icons: Map<string, L.DivIcon>
+  mapIcons: Map<string, L.DivIcon>
 ) {
-  setupResources(category, map, layers, icons);
+  setupResources(category, map, layers, mapIcons);
 }
 
 function setupResourceWells(
   category: CatergoryResourceWells,
   map: L.Map,
   layers: Map<string, L.LayerGroup>,
-  icons: Map<string, L.DivIcon>
+  mapIcons: Map<string, L.DivIcon>
 ) {
-  setupResources(category, map, layers, icons);
+  setupResources(category, map, layers, mapIcons);
 }
 
 function setupResources(
   resources: CatergoryResourceBase<ResourceNodes | ResourceWells>,
   map: L.Map,
   layers: Map<string, L.LayerGroup>,
-  icons: Map<string, L.DivIcon>
+  mapIcons: Map<string, L.DivIcon>
 ) {}
 
 function setupPowerSlugs(
   powerSlugs: CatergoryPowerSlugs,
   map: L.Map,
   layers: Map<string, L.LayerGroup>,
-  icons: Map<string, L.DivIcon>
+  mapIcons: Map<string, L.DivIcon>
 ) {
   for (const powerSlug of powerSlugs.options) {
     for (const pois of powerSlug.options) {
@@ -208,22 +209,25 @@ function setupPowerSlugs(
         L.layerGroup
       );
 
-      const icon = getOrCreateMapElement(icons, pois.layerId, () =>
-        L.divIcon({
-          className: "leaflet-data-marker",
-          html: svgIconMarker
-            .replaceAll("{outsideColor}", pois.outsideColor)
-            .replaceAll("{insideColor}", pois.insideColor)
-            .replaceAll("{iconImage}", pois.icon),
-          iconAnchor: [48, 78],
-          iconSize: [50, 80],
-        })
+      const icon = icons.get(pois.icon);
+      const mapIcon = getOrCreateMapElement(mapIcons, pois.layerId, () =>
+        icon === undefined
+          ? L.divIcon({ html: "test" })
+          : L.divIcon({
+              className: "leaflet-data-marker",
+              html: svgIconMarker
+                .replaceAll("{outsideColor}", pois.outsideColor)
+                .replaceAll("{insideColor}", pois.insideColor)
+                .replaceAll("{iconImageSrcSet}", icon),
+              iconAnchor: [48, 78],
+              iconSize: [50, 80],
+            })
       );
 
       // TODO: remove
       map.addLayer(layerGroup);
 
-      const currentMarkerOptions = { icon, riseOnHover: true };
+      const currentMarkerOptions = { icon: mapIcon, riseOnHover: true };
 
       for (const poi of pois.markers) {
         const marker = L.marker(
@@ -241,28 +245,28 @@ function setupDropPods(
   dropPods: CatergoryDropPods,
   map: L.Map,
   layers: Map<string, L.LayerGroup>,
-  icons: Map<string, L.DivIcon>
+  mapIcons: Map<string, L.DivIcon>
 ) {}
 
 function setupArtifacts(
   artifacts: CatergoryArtifacts,
   map: L.Map,
   layers: Map<string, L.LayerGroup>,
-  icons: Map<string, L.DivIcon>
+  mapIcons: Map<string, L.DivIcon>
 ) {}
 
 function setupCollectibles(
   collectibles: CatergoryCollectibles,
   map: L.Map,
   layers: Map<string, L.LayerGroup>,
-  icons: Map<string, L.DivIcon>
+  mapIcons: Map<string, L.DivIcon>
 ) {}
 
 function setupButtons(
   buttons: CatergoryButtons,
   map: L.Map,
   layers: Map<string, L.LayerGroup>,
-  icons: Map<string, L.DivIcon>
+  mapIcons: Map<string, L.DivIcon>
 ) {
   for (const button of buttons.options) {
     for (const poi of button.options) {
@@ -289,7 +293,7 @@ function setupSpawnLocations(
 ) {
   for (const marker of spawn.markers) {
     L.circle(mapUtils.unproject(map, [marker.x, marker.y]), {
-      radius: marker.radius,
+      radius: convertToMapUnit(marker.radius),
     }).addTo(layerGroup);
   }
 }

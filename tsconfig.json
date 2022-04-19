@@ -22,11 +22,11 @@
       "vite-plugin-vue-layouts/client"
     ],
     "baseUrl": "./src",
-    "rootDirs": [
-      "./",
-      "./public",
-    ],
+    "rootDir": "./",
     "paths": {
+      "~/icons": [
+        "app/raw/img/icons/index.ts"
+      ],
       "~/workers/*": [
         "workers/*"
       ],

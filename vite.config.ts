@@ -293,7 +293,7 @@ function autoImageIndex() {
     )}`;
   };
 
-  const createForDir = async (dir: string, relRoot: string) => {
+  const createForSubDir = async (dir: string, relRoot: string) => {
     const dirContent = await fs.readdir(dir, {
       withFileTypes: true,
     });
@@ -308,7 +308,35 @@ function autoImageIndex() {
     await fs.writeFile(indexPath, indexContent, { encoding: "utf8" });
     await Promise.all(
       subDirs.map((subDir) =>
-        createForDir(path.join(dir, subDir), `${relRoot}/..`)
+        createForSubDir(path.join(dir, subDir), `${relRoot}/..`)
+      )
+    );
+  };
+
+  const createForDir = async (dir: string, relRoot: string) => {
+    const dirContent = await fs.readdir(dir, {
+      withFileTypes: true,
+    });
+
+    const subDirs = dirContent
+      .filter((dirent) => dirent.isDirectory())
+      .map((dirent) => dirent.name);
+
+    const indexContent = `${subDirs
+      .map((name) => `import * as ${name} from "./${name}";\n`)
+      .filter(<T>(i: T | undefined): i is T => i !== undefined)
+      .join("\n")}\n\nconst icons = new Map<string, string>();\n${subDirs
+      .map(
+        (name) =>
+          `for (const [name, icon] of Object.entries(${name})) {\n  icons.set(name, icon)\n}`
+      )
+      .join("\n")}\nexport default icons;\nexport { ${subDirs.join(", ")} }\n`;
+
+    const indexPath = path.join(dir, "index.ts");
+    await fs.writeFile(indexPath, indexContent, { encoding: "utf8" });
+    await Promise.all(
+      subDirs.map((subDir) =>
+        createForSubDir(path.join(dir, subDir), `${relRoot}/..`)
       )
     );
   };

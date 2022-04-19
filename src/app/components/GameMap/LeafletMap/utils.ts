@@ -56,14 +56,22 @@ export function getCenter(map: L.Map) {
 
 export function convertToMapPoint(point: GamePointTuple): L.PointTuple {
   return [
-    ((point[0] + gameMap.centerX) * fullSize) / gameMap.width,
-    ((point[1] + gameMap.centerY) * fullSize) / gameMap.height,
+    convertToMapUnit(point[0] + gameMap.centerX),
+    convertToMapUnit(point[1] + gameMap.centerY),
   ];
 }
 
 export function convertToGamePoint(point: L.PointTuple): GamePointTuple {
   return [
-    (point[0] * gameMap.width) / fullSize - gameMap.centerX,
-    (point[1] * gameMap.height) / fullSize - gameMap.centerY,
+    convertToGameUnit(point[0]) - gameMap.centerX,
+    convertToGameUnit(point[1]) - gameMap.centerY,
   ];
+}
+
+export function convertToMapUnit(length: number) {
+  return (length * fullSize) / gameMap.width;
+}
+
+export function convertToGameUnit(length: number) {
+  return (length * gameMap.width) / fullSize;
 }
