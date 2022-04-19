@@ -11,5 +11,4 @@
 /.eslintrc-auto-import.json
 
 /src/public/img/
-/src/app/raw/img/**/*.png
 /src/app/raw/img/icons/**/index.ts
