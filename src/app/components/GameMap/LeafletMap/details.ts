@@ -245,7 +245,7 @@ export async function loadDetails(map: L.Map, mapVersion: MapVersionName) {
     } else if (isCatergoryCollectibles(category)) {
       setupCollectibles(category, map, layers, mapIcons);
     } else if (isCatergoryButtons(category)) {
-      setupButtons(category, map, layers, mapIcons);
+      setupButtons(category, map, layers);
     } else {
       console.error("Unknown Point of Interest Category", category);
     }
@@ -337,9 +337,6 @@ function setupPOIs(
         createMapIcon(pois)
       );
 
-      // TODO: remove
-      // map.addLayer(layerGroup);
-
       const currentMarkerOptions = { icon: mapIcon, riseOnHover: true };
 
       for (const poi of pois.markers) {
@@ -357,8 +354,7 @@ function setupPOIs(
 function setupButtons(
   buttons: CatergoryButtons,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
-  mapIcons: Map<string, L.DivIcon>
+  layers: Map<string, L.LayerGroup>
 ) {
   for (const button of buttons.options) {
     for (const entity of button.options) {
@@ -367,9 +363,6 @@ function setupButtons(
         entity.layerId,
         L.layerGroup
       );
-
-      // TODO: remove
-      map.addLayer(layerGroup);
 
       if (isSpawnLocations(entity)) {
         setupSpawnLocations(entity, map, layerGroup);
