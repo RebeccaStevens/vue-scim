@@ -5,6 +5,7 @@ import type { GamePointTuple } from "~/components/GameMap/types";
 import icons from "~/icons";
 import { getOrCreateMapElement } from "~/utils";
 
+import { polygonLine } from "./draw-extendsions";
 import type { MapVersionName } from "./map";
 import * as mapUtils from "./utils";
 import { convertToMapUnit } from "./utils";
@@ -99,18 +100,66 @@ type POIs = LayerEntity &
     markers: Marker[];
   }>;
 
-type SpawnLocations = POIs &
+type PointMarkers = POIs &
   ReadonlyDeep<{
-    layerId: "spawn";
     markers: Array<{
       radius: number;
     }>;
+  }>;
+
+type SpawnLocations = PointMarkers &
+  ReadonlyDeep<{
+    layerId: "spawn";
   }>;
 
 type WorldBorder = LayerEntity &
   ReadonlyDeep<{
     layerId: "worldBorder";
     polygon: GamePointTuple[];
+  }>;
+
+type Caves = LayerEntity &
+  ReadonlyDeep<{
+    layerId: "caves";
+    markers: Record<
+      string,
+      {
+        entrances: GamePointTuple[][];
+        points: GamePointTuple[];
+      }
+    >;
+  }>;
+
+type Roads = LayerEntity &
+  ReadonlyDeep<{
+    layerId: "roads";
+    markers: Record<
+      string,
+      {
+        points: GamePointTuple[];
+        corridor?: number;
+      }
+    >;
+  }>;
+
+type SporeFlowers = PointMarkers &
+  ReadonlyDeep<{
+    layerId: "sporeFlowers";
+  }>;
+
+type Pillars = PointMarkers &
+  ReadonlyDeep<{
+    layerId: "pillars";
+  }>;
+
+type SmallRocks = PointMarkers &
+  ReadonlyDeep<{
+    layerId: "smallRocks";
+  }>;
+
+type LargeRocks = PointMarkers &
+  ReadonlyDeep<{
+    layerId: "largeRocks";
   }>;
 
 type LabeledPOIs = POIs &
@@ -326,6 +375,18 @@ function setupButtons(
         setupSpawnLocations(entity, map, layerGroup);
       } else if (isWorldBorder(entity)) {
         setupWorldBorder(entity, map, layerGroup);
+      } else if (isCaves(entity)) {
+        setupCaves(entity, map, layerGroup);
+      } else if (isRoads(entity)) {
+        setupRoads(entity, map, layerGroup);
+      } else if (isSporeFlowers(entity)) {
+        setupSporeFlowers(entity, map, layerGroup);
+      } else if (isPillars(entity)) {
+        setupPillars(entity, map, layerGroup);
+      } else if (isSmallRocks(entity)) {
+        setupSmallRocks(entity, map, layerGroup);
+      } else if (isLargeRocks(entity)) {
+        setupLargeRocks(entity, map, layerGroup);
       }
     }
   }
@@ -356,6 +417,117 @@ function setupWorldBorder(
       interactive: false,
     }
   ).addTo(layerGroup);
+}
+
+function setupCaves(caves: Caves, map: L.Map, layerGroup: L.LayerGroup) {
+  for (const marker of Object.values(caves.markers)) {
+    const polygonPoints = marker.points.map((value) =>
+      mapUtils.unproject(map, value)
+    );
+
+    L.polygon(polygonPoints, {
+      color: "yellow",
+      weight: 1,
+      interactive: false,
+    }).addTo(layerGroup);
+
+    for (const entrance of marker.entrances) {
+      const entrancePolyline = L.polyline(
+        entrance.map((point) => mapUtils.unproject(map, point)),
+        {
+          color: "yellow",
+          weight: 4,
+          dashArray: "10 10",
+        }
+      );
+
+      // TODO: entrance height
+
+      entrancePolyline.addTo(layerGroup);
+    }
+  }
+}
+
+function setupRoads(roads: Roads, map: L.Map, layerGroup: L.LayerGroup) {
+  for (const marker of Object.values(roads.markers)) {
+    const points = marker.points.map((value) => mapUtils.unproject(map, value));
+
+    const roadPolyline = polygonLine(points, {
+      color: "purple",
+      weight: marker.corridor ?? 2500,
+      interactive: false,
+    });
+
+    roadPolyline.addTo(layerGroup);
+  }
+}
+
+function setupSporeFlowers(
+  sporeFlowers: SporeFlowers,
+  map: L.Map,
+  layerGroup: L.LayerGroup
+) {
+  const options: L.CircleMarkerOptions = {
+    radius: 2,
+    color: "#9cbc7d",
+    fillOpacity: 0.5,
+    stroke: false,
+  };
+  setupPointMarkers(sporeFlowers, map, layerGroup, options);
+}
+
+function setupPillars(pillars: Pillars, map: L.Map, layerGroup: L.LayerGroup) {
+  const options: L.CircleMarkerOptions = {
+    radius: 2,
+    color: "#bee597",
+    fillOpacity: 0.75,
+    stroke: false,
+  };
+  setupPointMarkers(pillars, map, layerGroup, options);
+}
+
+function setupSmallRocks(
+  smallRocks: SmallRocks,
+  map: L.Map,
+  layerGroup: L.LayerGroup
+) {
+  const options: L.CircleMarkerOptions = {
+    radius: 0.5,
+    color: "#555555",
+    fillOpacity: 0.75,
+    stroke: false,
+  };
+  setupPointMarkers(smallRocks, map, layerGroup, options);
+}
+
+function setupLargeRocks(
+  largeRocks: LargeRocks,
+  map: L.Map,
+  layerGroup: L.LayerGroup
+) {
+  const options: L.CircleMarkerOptions = {
+    radius: 1.2,
+    color: "#555555",
+    fillOpacity: 0.75,
+    stroke: false,
+  };
+  setupPointMarkers(largeRocks, map, layerGroup, options);
+}
+
+function setupPointMarkers(
+  point: PointMarkers,
+  map: L.Map,
+  layerGroup: L.LayerGroup,
+  options: L.CircleMarkerOptions
+) {
+  for (const marker of Object.values(point.markers)) {
+    const polygon = L.circle(
+      mapUtils.unproject(map, [marker.x, marker.y]),
+      options
+    );
+
+    polygon.addTo(layerGroup);
+  }
 }
 
 function isResourceNodesCatergory(
@@ -404,4 +576,28 @@ function isSpawnLocations(entity: LayerEntity): entity is SpawnLocations {
 
 function isWorldBorder(entity: LayerEntity): entity is WorldBorder {
   return entity.layerId === "worldBorder";
+}
+
+function isCaves(entity: LayerEntity): entity is Caves {
+  return entity.layerId === "caves";
+}
+
+function isRoads(entity: LayerEntity): entity is Roads {
+  return entity.layerId === "roads";
+}
+
+function isSporeFlowers(entity: LayerEntity): entity is SporeFlowers {
+  return entity.layerId === "sporeFlowers";
+}
+
+function isPillars(entity: LayerEntity): entity is Pillars {
+  return entity.layerId === "pillars";
+}
+
+function isSmallRocks(entity: LayerEntity): entity is SmallRocks {
+  return entity.layerId === "smallRocks";
+}
+
+function isLargeRocks(entity: LayerEntity): entity is LargeRocks {
+  return entity.layerId === "largeRocks";
 }
