@@ -1,32 +1,58 @@
 <script setup lang="ts">
-const checked = ref(false);
-
-defineProps<{
+type Props = {
   src?: string;
   srcSet?: string;
+  value?: boolean;
+  dense?: boolean;
+  label?: string;
+  noCaps?: boolean;
   title?: string;
-}>();
+  ratio?: number;
+  fit?: string;
+};
+
+type Emits = {
+  (event: "change", value: boolean): void;
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  value: false,
+  fit: "contain",
+});
+
+const emit = defineEmits<Emits>();
+
+const onChange = () => {
+  emit("change", !props.value);
+};
 </script>
 
 <template>
-  <q-item tag="label" dense :class="{ node: true, checked }" :title="title">
-    <q-checkbox display-none v-model="checked" />
-    <q-img :srcset="srcSet" ratio="1" fit="contain" />
-    <slot></slot>
-  </q-item>
+  <ToggleButton
+    :value="value"
+    :dense="dense"
+    :label="label"
+    :noCaps="noCaps"
+    :title="title"
+    class="image-toggle-button"
+    @change="onChange"
+  >
+    <q-img :src="src" :srcset="srcSet" :ratio="ratio" :fit="fit" />
+  </ToggleButton>
 </template>
 
-<style scoped>
-.node {
-  /* border: 0.05rem solid #444; */
+<style scoped lang="scss">
+.image-toggle-button {
   border-radius: 0.5rem;
   padding: 0.25rem;
   margin: 0.25rem;
-  width: 3.5rem;
-  aspect-ratio: 1;
-}
-.node.checked {
-  /* border-color: transparent; */
-  box-shadow: 0 0 0 0.2rem rgb(243 156 18 / 50%);
+
+  :deep(.q-btn__content) {
+    margin: -0.25rem;
+  }
+
+  :deep(.q-img__image) {
+    border-radius: 0.5rem;
+  }
 }
 </style>

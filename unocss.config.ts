@@ -49,6 +49,8 @@ export default defineConfig({
     "i-carbon-download",
     "i-carbon-upload",
     "i-carbon-user-avatar-filled",
+    "i-carbon-arrow-left",
+    "i-carbon-arrow-right",
     "i-clarity-flask-solid",
     "i-emojione-crescent-moon",
     "i-emojione-flag-for-united-states",

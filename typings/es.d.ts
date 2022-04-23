@@ -4,6 +4,16 @@ declare global {
       object: ObjectType,
       key: Key
     ): object is ObjectType & Record<Key, unknown>;
+
+    entries<T>(
+      o: T
+    ): T extends ArrayLike<infer U>
+      ? Array<[string, U]>
+      : Array<{ [K in keyof T]: [K, T[K]] }[keyof T]>;
+
+    keys<T>(o: T): Array<keyof T>;
+
+    values<T>(o: T): T extends ArrayLike<infer U> ? U[] : Array<T[keyof T]>;
   }
 
   interface ArrayConstructor {

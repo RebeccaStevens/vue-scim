@@ -14,7 +14,7 @@ const largeMenuSize = 25;
 </script>
 
 <template>
-  <QMenuHover>
+  <QMenuHover class="image-toggle-button-menu">
     <template #default="{ activatorAttr, menuAttr }">
       <ImageToggleButton
         :src="node.imgSrc"

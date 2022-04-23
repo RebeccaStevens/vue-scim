@@ -1,13 +1,33 @@
 <script setup lang="ts">
-import { createMap } from "./map";
+import { useMapDataStore } from "~/stores/map-data";
+
+import type { MapInstance } from "./map";
+import { createMap, setMapLayer } from "./map";
 
 const mapVersion = "EarlyAccess" as const;
 
+const mapDataStore = useMapDataStore();
+
+const mapInstance = ref<MapInstance>();
+
+watch(toRef(mapDataStore, "backgroundLayer"), (layerName) => {
+  if (mapInstance.value !== undefined) {
+    setMapLayer(mapInstance.value, layerName);
+  }
+});
+
 async function setupMap() {
-  const mapData = await createMap("leaflet-game-map-container", mapVersion);
+  mapInstance.value = await createMap("leaflet-game-map-container", mapVersion);
+}
+
+function cleanup() {
+  if (mapInstance.value !== undefined) {
+    mapInstance.value.cleanup();
+  }
 }
 
 onMounted(setupMap);
+onUnmounted(cleanup);
 </script>
 
 <template>

@@ -147,7 +147,7 @@ type SporeFlowers = PointMarkers &
     layerId: "sporeFlowers";
   }>;
 
-type Pillars = PointMarkers &
+type GasPillars = PointMarkers &
   ReadonlyDeep<{
     layerId: "pillars";
   }>;
@@ -374,7 +374,7 @@ function setupButtons(
         setupRoads(entity, map, layerGroup);
       } else if (isSporeFlowers(entity)) {
         setupSporeFlowers(entity, map, layerGroup);
-      } else if (isPillars(entity)) {
+      } else if (isGasPillars(entity)) {
         setupPillars(entity, map, layerGroup);
       } else if (isSmallRocks(entity)) {
         setupSmallRocks(entity, map, layerGroup);
@@ -425,12 +425,14 @@ function setupCaves(caves: Caves, map: L.Map, layerGroup: L.LayerGroup) {
     }).addTo(layerGroup);
 
     for (const entrance of marker.entrances) {
-      const entrancePolyline = L.polyline(
+      const entrancePolyline = polygonLine(
         entrance.map((point) => mapUtils.unproject(map, point)),
         {
           color: "yellow",
-          weight: 4,
-          dashArray: "10 10",
+          minWeight: 3,
+          weight: 250,
+          dashArray: "100 100",
+          interactive: false,
         }
       );
 
@@ -469,7 +471,11 @@ function setupSporeFlowers(
   setupPointMarkers(sporeFlowers, map, layerGroup, options);
 }
 
-function setupPillars(pillars: Pillars, map: L.Map, layerGroup: L.LayerGroup) {
+function setupPillars(
+  pillars: GasPillars,
+  map: L.Map,
+  layerGroup: L.LayerGroup
+) {
   const options: L.CircleMarkerOptions = {
     radius: 2,
     color: "#bee597",
@@ -583,7 +589,7 @@ function isSporeFlowers(entity: LayerEntity): entity is SporeFlowers {
   return entity.layerId === "sporeFlowers";
 }
 
-function isPillars(entity: LayerEntity): entity is Pillars {
+function isGasPillars(entity: LayerEntity): entity is GasPillars {
   return entity.layerId === "pillars";
 }
 

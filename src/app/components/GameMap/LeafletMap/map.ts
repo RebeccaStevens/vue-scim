@@ -4,21 +4,26 @@ import L from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 
+import { useMapDataStore } from "~/stores/map-data";
+
 import { loadDetails } from "./details";
 import { getBounds, tileSize } from "./utils";
 
-export type MapData = Readonly<{
+export type MapInstance = Readonly<{
   map: L.Map;
   layers: Map<MapVersionName[number], L.TileLayer>;
   bounds: L.LatLngBoundsExpression;
   state: {
-    layer: L.Layer;
+    layerName: MapVersionName[number];
   };
+  cleanup: () => void;
 }>;
 
 export type MapVersionNames = typeof mapVersions;
 export type MapVersionName = keyof MapVersionNames;
 export type MapLayerName = MapVersionNames[MapVersionName][number];
+
+const mapDataStore = useMapDataStore();
 
 const mapVersions = {
   EarlyAccess: ["gameLayer", "realisticLayer"],
@@ -41,7 +46,7 @@ const zoomOptions = {
 export async function createMap(
   containerId: string,
   versionName: MapVersionName
-): Promise<MapData> {
+): Promise<MapInstance> {
   const map = L.map(containerId, {
     crs: L.CRS.Simple,
     minZoom: zoomOptions.min,
@@ -49,7 +54,7 @@ export async function createMap(
     zoom: zoomOptions.min,
     zoomDelta: zoomOptions.delta,
     zoomSnap: zoomOptions.snap,
-    preferCanvas: true,
+    // preferCanvas: true,
     attributionControl: false,
     // boxZoom: false,
     // doubleClickZoom: false,
@@ -70,10 +75,10 @@ export async function createMap(
 export async function setMapVersion(
   map: L.Map,
   version: MapVersionName
-): Promise<MapData> {
+): Promise<MapInstance> {
   const mapVersionData = setupMapVersion(map, version);
 
-  const layerName: MapLayerName = "gameLayer";
+  const layerName = mapDataStore.backgroundLayer;
   const layer = mapVersionData.layers.get(layerName);
   console.assert(
     layer !== undefined,
@@ -82,39 +87,69 @@ export async function setMapVersion(
 
   map.addLayer(layer);
 
-  const state: MapData["state"] = {
-    layer,
+  const state: MapInstance["state"] = {
+    layerName,
   };
 
-  await loadDetails(map, version);
+  const detailLayers = await loadDetails(map, version);
+
+  const detailLayersRefs = toRefs(mapDataStore.detailLayers);
+
+  const cleanupDetailLayers = Object.entries(mapDataStore.detailLayers).map(
+    ([name, currentValue]) => {
+      const detailLayer = detailLayers.get(name);
+      console.assert(detailLayer !== undefined, `Cannot find layer: ${name}`);
+
+      const updateFn = (newValue: boolean) => {
+        const hasLayer = map.hasLayer(detailLayer);
+        if (hasLayer && !newValue) {
+          map.removeLayer(detailLayer);
+        } else if (!hasLayer && newValue) {
+          map.addLayer(detailLayer);
+        }
+      };
+
+      updateFn(currentValue);
+
+      return watch(detailLayersRefs[name], (newValue) => {
+        updateFn(newValue);
+      });
+    }
+  );
+  const cleanup = () => {
+    for (const cleanupDetailLayer of cleanupDetailLayers) {
+      cleanupDetailLayer();
+    }
+  };
 
   return {
     ...mapVersionData,
     map,
     state,
+    cleanup,
   };
 }
 
 /**
  * Set the active/visible layer of the leaflet map.
  *
- * @param mapData - The map data.
+ * @param mapInstance - The map data.
  * @param layerName - The name of the layer to make visible.
  */
-export function setMapLayer(mapData: MapData, layerName: MapLayerName) {
-  const currentLayer = mapData.layers.get(mapData.state.layer);
+export function setMapLayer(mapInstance: MapInstance, layerName: MapLayerName) {
+  const currentLayer = mapInstance.layers.get(mapInstance.state.layerName);
   if (currentLayer !== undefined) {
-    mapData.map.removeLayer(currentLayer);
+    mapInstance.map.removeLayer(currentLayer);
   }
 
-  const newLayer = mapData.layers.get(layerName);
+  const newLayer = mapInstance.layers.get(layerName);
   console.assert(
     newLayer !== undefined,
     `Could not find the layer with name "${layerName}"`
   );
 
-  mapData.state.layer = newLayer;
-  mapData.map.addLayer(newLayer);
+  mapInstance.state.layerName = layerName;
+  mapInstance.map.addLayer(newLayer);
 }
 
 /**
