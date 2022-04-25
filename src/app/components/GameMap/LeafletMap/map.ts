@@ -1,11 +1,14 @@
 /* eslint-disable unicorn/no-array-method-this-argument */
 
 import L from "leaflet";
-
 import "leaflet/dist/leaflet.css";
+import type { WatchStopHandle } from "vue";
 
+import type { ResourceData } from "~/stores/map-data";
 import { useMapDataStore } from "~/stores/map-data";
+import { transpose, getResourcePurityId } from "~/utils";
 
+import type { LayersDataMap, POIs } from "./details";
 import { loadDetails } from "./details";
 import { getBounds, tileSize } from "./utils";
 
@@ -13,9 +16,7 @@ export type MapInstance = Readonly<{
   map: L.Map;
   layers: Map<MapVersionName[number], L.TileLayer>;
   bounds: L.LatLngBoundsExpression;
-  state: {
-    layerName: MapVersionName[number];
-  };
+  layerPOIs: POIs[];
   cleanup: () => void;
 }>;
 
@@ -87,57 +88,29 @@ export async function setMapVersion(
 
   map.addLayer(layer);
 
-  const state: MapInstance["state"] = {
-    layerName,
-  };
-
   const detailLayers = await loadDetails(map, version);
 
-  const detailLayersRefs = toRefs(mapDataStore.detailLayers);
-
-  const cleanupDetailLayers = Object.entries(mapDataStore.detailLayers).map(
-    ([name, currentValue]) => {
-      const detailLayer = detailLayers.get(name);
-      console.assert(detailLayer !== undefined, `Cannot find layer: ${name}`);
-
-      const updateFn = (newValue: boolean) => {
-        const hasLayer = map.hasLayer(detailLayer);
-        if (hasLayer && !newValue) {
-          map.removeLayer(detailLayer);
-        } else if (!hasLayer && newValue) {
-          map.addLayer(detailLayer);
-        }
-      };
-
-      updateFn(currentValue);
-
-      return watch(detailLayersRefs[name], (newValue) => {
-        updateFn(newValue);
-      });
-    }
-  );
-  const cleanup = () => {
-    for (const cleanupDetailLayer of cleanupDetailLayers) {
-      cleanupDetailLayer();
-    }
-  };
+  const { cleanup, layerPOIs } = setupDetailLayerToggles(detailLayers, map);
 
   return {
     ...mapVersionData,
     map,
-    state,
+    layerPOIs,
     cleanup,
   };
 }
 
 /**
- * Set the active/visible layer of the leaflet map.
+ * Set the active/visible background layer of the leaflet map.
  *
  * @param mapInstance - The map data.
  * @param layerName - The name of the layer to make visible.
  */
-export function setMapLayer(mapInstance: MapInstance, layerName: MapLayerName) {
-  const currentLayer = mapInstance.layers.get(mapInstance.state.layerName);
+export function setMapBackgroundLayer(
+  mapInstance: MapInstance,
+  layerName: MapLayerName
+) {
+  const currentLayer = mapInstance.layers.get(mapDataStore.backgroundLayer);
   if (currentLayer !== undefined) {
     mapInstance.map.removeLayer(currentLayer);
   }
@@ -148,7 +121,7 @@ export function setMapLayer(mapInstance: MapInstance, layerName: MapLayerName) {
     `Could not find the layer with name "${layerName}"`
   );
 
-  mapInstance.state.layerName = layerName;
+  mapDataStore.backgroundLayer = layerName;
   mapInstance.map.addLayer(newLayer);
 }
 
@@ -199,6 +172,70 @@ function setupMapLayers(
       L.tileLayer(`/img/map/${version}/${layer}/{z}/{x}/{y}.webp`, options),
     ])
   );
+}
+
+function setupDetailLayerToggles(layersDataMap: LayersDataMap, map: L.Map) {
+  const layerRefs = [
+    ...Object.entries(mapDataStore.detailLayers).map(
+      ([name, value]) =>
+        [name, toRef(mapDataStore.detailLayers[name], "show"), value] as const
+    ),
+    ...mapResourcesToRefs(mapDataStore.resourceNodeLayers),
+    ...mapResourcesToRefs(mapDataStore.resourceWellLayers),
+  ];
+
+  const [cleanupDetailLayers, layerPOIs] = transpose(
+    layerRefs.map(([name, ref, currentValue]) => {
+      const detailLayerData = layersDataMap.get(name);
+      console.assert(
+        detailLayerData !== undefined,
+        `Cannot find layer: ${name}`
+      );
+
+      const updateFn = (newValue: boolean) => {
+        const hasLayer = map.hasLayer(detailLayerData.layer);
+        if (hasLayer && !newValue) {
+          map.removeLayer(detailLayerData.layer);
+        } else if (!hasLayer && newValue) {
+          map.addLayer(detailLayerData.layer);
+        }
+      };
+
+      updateFn(currentValue.show);
+
+      return [
+        watch(ref, (newValue) => {
+          updateFn(newValue);
+        }),
+        detailLayerData.pois,
+      ] as const;
+    })
+  ) as [WatchStopHandle[], POIs[]];
+
+  const cleanup = () => {
+    for (const cleanupDetailLayer of cleanupDetailLayers) {
+      cleanupDetailLayer();
+    }
+  };
+
+  return {
+    layerPOIs,
+    cleanup,
+  };
+
+  function mapResourcesToRefs(
+    resourceLayers: Readonly<Record<string, ResourceData>>
+  ) {
+    return Object.entries(resourceLayers).flatMap(([resource, purities]) =>
+      Object.entries(purities).map(([purity, value]) => {
+        return [
+          getResourcePurityId(resource, purity),
+          toRef(purities[purity], "show"),
+          value,
+        ] as const;
+      })
+    );
+  }
 }
 
 /* eslint-enable unicorn/no-array-method-this-argument */

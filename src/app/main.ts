@@ -6,7 +6,7 @@ import "quasar/src/css/index.sass";
 import App from "./App.vue";
 
 import "@unocss/reset/tailwind.css";
-import "./styles/main.css";
+import "./styles/main.scss";
 import "uno.css";
 
 const routes = setupLayouts(generatedRoutes);

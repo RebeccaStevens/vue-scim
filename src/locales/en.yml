@@ -79,3 +79,27 @@ language:
       title: Change language to {language}
 
 not-found: Not found
+
+resources:
+  ironOre:
+    name: Iron Ore
+  copperOre:
+    name: Copper Ore
+  limestone:
+    name: Limestone
+  coal:
+    name: Coal
+  cateriumOre:
+    name: Caterium Ore
+  rawQuartz:
+    name: Raw Quartz
+  sulfur:
+    name: Sulfur
+  uranium:
+    name: Uranium
+  bauxite:
+    name: Bauxite
+  crudeOil:
+    name: Crude Oil
+  samOre:
+    name: S.A.M. Ore

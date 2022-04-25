@@ -5,27 +5,35 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+$spacing: 1.5rem;
+
+$controlsWidth: 25%;
+$controlsMinWidth: 25rem;
+$controlsMaxWidth: 30rem;
+
+$toolbarHeight: 50px;
+
 .page-map {
-  display: flex;
-  height: 100%;
-  column-gap: 1.5rem;
-  row-gap: 1.5rem;
-  margin: 1.5rem;
+  min-height: 100%;
+  margin: $spacing;
+  position: relative;
 }
 
 .game-map {
   margin: 0;
-  flex-grow: 1;
-  flex-basis: 75%;
+  position: fixed;
+  top: calc($toolbarHeight + $spacing);
+  bottom: calc($toolbarHeight + $spacing);
+  left: $spacing;
+  right: calc(clamp($controlsMinWidth, $controlsWidth, $controlsMaxWidth) + 2 * $spacing);
 }
 
 .controls {
-  margin: 0;
-  flex-grow: 1;
-  flex-basis: 25%;
-  min-width: 25rem;
-  max-width: 30rem;
+  margin: 0 0 0 auto;
+  width: $controlsWidth;
+  min-width: $controlsMinWidth;
+  max-width: $controlsMaxWidth;
 }
 </style>
 

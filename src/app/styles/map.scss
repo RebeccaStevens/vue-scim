@@ -1,0 +1,26 @@
+$purity-impure-color: #d23430;
+$purity-normal-color: #f26418;
+$purity-pure-color: #80b139;
+
+:root {
+  --purity-impure-color: #{$purity-impure-color};
+  --purity-normal-color: #{$purity-normal-color};
+  --purity-pure-color: #{$purity-pure-color};
+
+  --purity-impure-dull-color: #{lighten($purity-impure-color, 40%)};
+  --purity-normal-dull-color: #{lighten($purity-normal-color, 40%)};
+  --purity-pure-dull-color: #{lighten($purity-pure-color, 40%)};
+}
+
+.impure {
+  --purity-color: var(--purity-impure-color);
+  --purity-dull-color: var(--purity-impure-dull-color);
+}
+.normal {
+  --purity-color: var(--purity-normal-color);
+  --purity-dull-color: var(--purity-normal-dull-color);
+}
+.pure {
+  --purity-color: var(--purity-pure-color);
+  --purity-dull-color: var(--purity-pure-dull-color);
+}

@@ -16,6 +16,10 @@ declare global {
     values<T>(o: T): T extends ArrayLike<infer U> ? U[] : Array<T[keyof T]>;
   }
 
+  interface ReadonlyArray<T> {
+    includes(searchElement: unknown, fromIndex?: number): boolean;
+  }
+
   interface ArrayConstructor {
     isArray(arg: unknown): arg is unknown[] | ReadonlyArray<unknown>;
   }

@@ -3,12 +3,20 @@ import type { ReadonlyDeep } from "type-fest";
 
 import type { GamePointTuple } from "~/components/GameMap/types";
 import icons from "~/icons";
-import { getOrCreateMapElement } from "~/utils";
+import { useMapDataStore } from "~/stores/map-data";
+import { getOrCreateMapElement, getResourcePurityId } from "~/utils";
 
 import { polygonLine } from "./draw-extendsions";
 import type { MapVersionName } from "./map";
 import * as mapUtils from "./utils";
 import { convertToMapUnit } from "./utils";
+
+const mapDataStore = useMapDataStore();
+
+export type LayersDataMap = Map<
+  string,
+  { layer: L.LayerGroup; pois: POIs; type: string }
+>;
 
 type MapDetailsData = ReadonlyDeep<{
   options: Catergory[];
@@ -92,10 +100,10 @@ type Marker = ReadonlyDeep<{
 }>;
 
 type LayerEntity = ReadonlyDeep<{
-  layerId: string;
+  type: string;
 }>;
 
-type POIs = LayerEntity &
+export type POIs = LayerEntity &
   ReadonlyDeep<{
     markers: Marker[];
   }>;
@@ -109,18 +117,18 @@ type PointMarkers = POIs &
 
 type SpawnLocations = PointMarkers &
   ReadonlyDeep<{
-    layerId: "spawn";
+    type: "spawn";
   }>;
 
 type WorldBorder = LayerEntity &
   ReadonlyDeep<{
-    layerId: "worldBorder";
+    type: "worldBorder";
     polygon: GamePointTuple[];
   }>;
 
 type Caves = LayerEntity &
   ReadonlyDeep<{
-    layerId: "caves";
+    type: "caves";
     markers: Record<
       string,
       {
@@ -132,7 +140,7 @@ type Caves = LayerEntity &
 
 type Roads = LayerEntity &
   ReadonlyDeep<{
-    layerId: "roads";
+    type: "roads";
     markers: Record<
       string,
       {
@@ -144,25 +152,25 @@ type Roads = LayerEntity &
 
 type SporeFlowers = PointMarkers &
   ReadonlyDeep<{
-    layerId: "sporeFlowers";
+    type: "sporeFlowers";
   }>;
 
 type GasPillars = PointMarkers &
   ReadonlyDeep<{
-    layerId: "pillars";
+    type: "pillars";
   }>;
 
 type SmallRocks = PointMarkers &
   ReadonlyDeep<{
-    layerId: "smallRocks";
+    type: "smallRocks";
   }>;
 
 type LargeRocks = PointMarkers &
   ReadonlyDeep<{
-    layerId: "largeRocks";
+    type: "largeRocks";
   }>;
 
-type LabeledPOIs = POIs &
+export type LabeledPOIs = POIs &
   ReadonlyDeep<{
     icon: string;
     name: string;
@@ -179,10 +187,8 @@ type ResourceWells = ResourcesData;
 
 type ResourcesData = LabeledPOIs &
   ReadonlyDeep<{
+    type: string;
     purity: string;
-    markers: Array<{
-      purity: string;
-    }>;
   }>;
 
 const svgIconMarker =
@@ -228,7 +234,7 @@ export async function loadDetails(map: L.Map, mapVersion: MapVersionName) {
   const request = await fetch(`/data/map/${mapVersion}/details.json`);
   const details = (await request.json()) as MapDetailsData;
 
-  const layers = new Map<string, L.LayerGroup>();
+  const layers: LayersDataMap = new Map();
   const mapIcons = new Map<string, L.DivIcon>();
 
   for (const category of details.options) {
@@ -251,89 +257,124 @@ export async function loadDetails(map: L.Map, mapVersion: MapVersionName) {
     }
   }
 
+  const iconsToRegister = [...layers.values()]
+    .map((data) => {
+      if (isResourcesData(data.pois)) {
+        if (data.type !== "nodes" && data.type !== "wells") {
+          return undefined;
+        }
+        return [
+          data.type,
+          [data.pois.type, data.pois.purity, icons.get(data.pois.icon)],
+        ] as const;
+      }
+      return undefined;
+    })
+    .filter(
+      (value): value is ["nodes" | "wells", [string, string, string]] =>
+        value?.[1][1] !== undefined
+    );
+
+  for (const [type, [resource, purity, srcSet]] of iconsToRegister) {
+    switch (type) {
+      case "nodes":
+        mapDataStore.registerResourceNodeLayerIcon(resource, purity, srcSet);
+        break;
+      case "wells":
+        mapDataStore.registerResourceWellLayerIcon(resource, purity, srcSet);
+        break;
+    }
+  }
+
   return layers;
 }
 
 function setupResourceNodes(
-  category: CatergoryResourceNodes,
+  nodes: CatergoryResourceNodes,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
+  layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupResources(category, map, layers, mapIcons);
+  setupResources(nodes, map, layersData, mapIcons, "nodes");
 }
 
 function setupResourceWells(
-  category: CatergoryResourceWells,
+  wells: CatergoryResourceWells,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
+  layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupResources(category, map, layers, mapIcons);
+  setupResources(wells, map, layersData, mapIcons, "wells");
 }
 
 function setupResources(
   resources: CatergoryResourceBase<ResourceNodes | ResourceWells>,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
-  mapIcons: Map<string, L.DivIcon>
+  layersData: LayersDataMap,
+  mapIcons: Map<string, L.DivIcon>,
+  type: string
 ) {
-  setupPOIs(resources, map, layers, mapIcons);
+  setupPOIs(resources, map, layersData, mapIcons, type);
 }
 
 function setupPowerSlugs(
   powerSlugs: CatergoryPowerSlugs,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
+  layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupPOIs(powerSlugs, map, layers, mapIcons);
+  setupPOIs(powerSlugs, map, layersData, mapIcons, "powerSlugs");
 }
 
 function setupDropPods(
   dropPods: CatergoryDropPods,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
+  layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupPOIs(dropPods, map, layers, mapIcons);
+  setupPOIs(dropPods, map, layersData, mapIcons, "dropPods");
 }
 
 function setupArtifacts(
   artifacts: CatergoryArtifacts,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
+  layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupPOIs(artifacts, map, layers, mapIcons);
+  setupPOIs(artifacts, map, layersData, mapIcons, "artifacts");
 }
 
 function setupCollectibles(
   collectibles: CatergoryCollectibles,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
+  layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupPOIs(collectibles, map, layers, mapIcons);
+  setupPOIs(collectibles, map, layersData, mapIcons, "collectibles");
 }
 
 function setupPOIs(
   objectPois: CatergoryPOIsBase,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>,
-  mapIcons: Map<string, L.DivIcon>
+  layersData: LayersDataMap,
+  mapIcons: Map<string, L.DivIcon>,
+  type: string
 ) {
   for (const poisData of objectPois.options) {
     for (const pois of poisData.options) {
-      const layerGroup = getOrCreateMapElement(
-        layers,
-        pois.layerId,
-        L.layerGroup
-      );
+      const name = isResourcesData(pois)
+        ? getResourcePurityId(pois.type, pois.purity)
+        : pois.type;
+
+      const layerData = getOrCreateMapElement(layersData, name, () => ({
+        layer: L.layerGroup(),
+        pois,
+        type,
+      }));
 
       const mapIcon = getOrCreateMapElement(
         mapIcons,
-        pois.layerId,
+        name,
         createMapIcon(pois)
       );
 
@@ -345,7 +386,7 @@ function setupPOIs(
           currentMarkerOptions
         );
 
-        marker.addTo(layerGroup);
+        marker.addTo(layerData.layer);
       }
     }
   }
@@ -354,32 +395,31 @@ function setupPOIs(
 function setupButtons(
   buttons: CatergoryButtons,
   map: L.Map,
-  layers: Map<string, L.LayerGroup>
+  layersData: LayersDataMap
 ) {
   for (const button of buttons.options) {
     for (const entity of button.options) {
-      const layerGroup = getOrCreateMapElement(
-        layers,
-        entity.layerId,
-        L.layerGroup
-      );
+      const layerData = getOrCreateMapElement(layersData, entity.type, () => ({
+        layer: L.layerGroup(),
+        pois: entity,
+      }));
 
       if (isSpawnLocations(entity)) {
-        setupSpawnLocations(entity, map, layerGroup);
+        setupSpawnLocations(entity, map, layerData.layer);
       } else if (isWorldBorder(entity)) {
-        setupWorldBorder(entity, map, layerGroup);
+        setupWorldBorder(entity, map, layerData.layer);
       } else if (isCaves(entity)) {
-        setupCaves(entity, map, layerGroup);
+        setupCaves(entity, map, layerData.layer);
       } else if (isRoads(entity)) {
-        setupRoads(entity, map, layerGroup);
+        setupRoads(entity, map, layerData.layer);
       } else if (isSporeFlowers(entity)) {
-        setupSporeFlowers(entity, map, layerGroup);
+        setupSporeFlowers(entity, map, layerData.layer);
       } else if (isGasPillars(entity)) {
-        setupPillars(entity, map, layerGroup);
+        setupPillars(entity, map, layerData.layer);
       } else if (isSmallRocks(entity)) {
-        setupSmallRocks(entity, map, layerGroup);
+        setupSmallRocks(entity, map, layerData.layer);
       } else if (isLargeRocks(entity)) {
-        setupLargeRocks(entity, map, layerGroup);
+        setupLargeRocks(entity, map, layerData.layer);
       }
     }
   }
@@ -570,33 +610,45 @@ function isCatergoryButtons(category: Catergory): category is CatergoryButtons {
 }
 
 function isSpawnLocations(entity: LayerEntity): entity is SpawnLocations {
-  return entity.layerId === "spawn";
+  return entity.type === "spawn";
 }
 
 function isWorldBorder(entity: LayerEntity): entity is WorldBorder {
-  return entity.layerId === "worldBorder";
+  return entity.type === "worldBorder";
 }
 
 function isCaves(entity: LayerEntity): entity is Caves {
-  return entity.layerId === "caves";
+  return entity.type === "caves";
 }
 
 function isRoads(entity: LayerEntity): entity is Roads {
-  return entity.layerId === "roads";
+  return entity.type === "roads";
 }
 
 function isSporeFlowers(entity: LayerEntity): entity is SporeFlowers {
-  return entity.layerId === "sporeFlowers";
+  return entity.type === "sporeFlowers";
 }
 
 function isGasPillars(entity: LayerEntity): entity is GasPillars {
-  return entity.layerId === "pillars";
+  return entity.type === "pillars";
 }
 
 function isSmallRocks(entity: LayerEntity): entity is SmallRocks {
-  return entity.layerId === "smallRocks";
+  return entity.type === "smallRocks";
 }
 
 function isLargeRocks(entity: LayerEntity): entity is LargeRocks {
-  return entity.layerId === "largeRocks";
+  return entity.type === "largeRocks";
+}
+
+function isLabeldPOIs(pois: POIs): pois is LabeledPOIs {
+  return Object.hasOwn(pois, "name");
+}
+
+function isResourcesData(pois: POIs): pois is ResourcesData {
+  return (
+    isLabeldPOIs(pois) &&
+    Object.hasOwn(pois, "type") &&
+    Object.hasOwn(pois, "purity")
+  );
 }

@@ -2,7 +2,7 @@
 import { useMapDataStore } from "~/stores/map-data";
 
 import type { MapInstance } from "./map";
-import { createMap, setMapLayer } from "./map";
+import { createMap, setMapBackgroundLayer } from "./map";
 
 const mapVersion = "EarlyAccess" as const;
 
@@ -12,7 +12,7 @@ const mapInstance = ref<MapInstance>();
 
 watch(toRef(mapDataStore, "backgroundLayer"), (layerName) => {
   if (mapInstance.value !== undefined) {
-    setMapLayer(mapInstance.value, layerName);
+    setMapBackgroundLayer(mapInstance.value, layerName);
   }
 });
 
