@@ -109,3 +109,21 @@ resources:
     name: Water
   geyser:
     name: Geyser
+
+detail-layers:
+  spawn:
+    label: Spawn Locations
+  worldBorder:
+    label: World Border
+  sporeFlowers:
+    label: Spore Flowers
+  pillars:
+    label: Gas Pillars
+  smallRocks:
+    label: Small Rocks
+  largeRocks:
+    label: Large Rocks
+  caves:
+    label: Caves
+  roads:
+    label: Roads

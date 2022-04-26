@@ -59,52 +59,13 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
         </div>
         <div class="layer-buttons">
           <ToggleButton
+            v-for="[detail, detailLayer] in Object.entries(detailLayers)"
+            :key="detail"
+            class="detail"
             no-caps
-            :value="detailLayers.spawn.value.show"
-            @change="mapDataStore.toggleDetailLayer('spawn')"
-            >{{ t("Spawn Locations") }}</ToggleButton
-          >
-          <ToggleButton
-            no-caps
-            :value="detailLayers.worldBorder.value.show"
-            @change="mapDataStore.toggleDetailLayer('worldBorder')"
-            >{{ t("World Border") }}</ToggleButton
-          >
-          <ToggleButton
-            no-caps
-            :value="detailLayers.sporeFlowers.value.show"
-            @change="mapDataStore.toggleDetailLayer('sporeFlowers')"
-            >{{ t("Spore Flowers") }}</ToggleButton
-          >
-          <ToggleButton
-            no-caps
-            :value="detailLayers.pillars.value.show"
-            @change="mapDataStore.toggleDetailLayer('pillars')"
-            >{{ t("Gas Pillars") }}</ToggleButton
-          >
-          <ToggleButton
-            no-caps
-            :value="detailLayers.smallRocks.value.show"
-            @change="mapDataStore.toggleDetailLayer('smallRocks')"
-            >{{ t("Small Rocks") }}</ToggleButton
-          >
-          <ToggleButton
-            no-caps
-            :value="detailLayers.largeRocks.value.show"
-            @change="mapDataStore.toggleDetailLayer('largeRocks')"
-            >{{ t("Large Rocks") }}</ToggleButton
-          >
-          <ToggleButton
-            no-caps
-            :value="detailLayers.caves.value.show"
-            @change="mapDataStore.toggleDetailLayer('caves')"
-            >{{ t("Caves") }}</ToggleButton
-          >
-          <ToggleButton
-            no-caps
-            :value="detailLayers.roads.value.show"
-            @change="mapDataStore.toggleDetailLayer('roads')"
-            >{{ t("Roads") }}</ToggleButton
+            :value="detailLayer.value.show"
+            @change="mapDataStore.toggleDetailLayer(detail)"
+            >{{ t(`detail-layers.${detail}.label`) }}</ToggleButton
           >
         </div>
       </q-tab-panel>
