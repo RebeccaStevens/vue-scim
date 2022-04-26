@@ -180,8 +180,8 @@ function setupDetailLayerToggles(layersDataMap: LayersDataMap, map: L.Map) {
       ([name, value]) =>
         [name, toRef(mapDataStore.detailLayers[name], "show"), value] as const
     ),
-    ...mapResourcesToRefs(mapDataStore.resourceNodeLayers),
-    ...mapResourcesToRefs(mapDataStore.resourceWellLayers),
+    ...mapResourcesToRefs(mapDataStore.resourceNodeLayers, "nodes"),
+    ...mapResourcesToRefs(mapDataStore.resourceWellLayers, "wells"),
   ];
 
   const [cleanupDetailLayers, layerPOIs] = transpose(
@@ -224,12 +224,13 @@ function setupDetailLayerToggles(layersDataMap: LayersDataMap, map: L.Map) {
   };
 
   function mapResourcesToRefs(
-    resourceLayers: Readonly<Record<string, ResourceData>>
+    resourceLayers: Readonly<Record<string, ResourceData>>,
+    type: string
   ) {
     return Object.entries(resourceLayers).flatMap(([resource, purities]) =>
       Object.entries(purities).map(([purity, value]) => {
         return [
-          getResourcePurityId(resource, purity),
+          `${getResourcePurityId(resource, purity)}-${type}`,
           toRef(purities[purity], "show"),
           value,
         ] as const;

@@ -362,9 +362,11 @@ function setupPOIs(
 ) {
   for (const poisData of objectPois.options) {
     for (const pois of poisData.options) {
-      const name = isResourcesData(pois)
-        ? getResourcePurityId(pois.type, pois.purity)
-        : pois.type;
+      const name = `${
+        isResourcesData(pois)
+          ? getResourcePurityId(pois.type, pois.purity)
+          : pois.type
+      }-${type}`;
 
       const layerData = getOrCreateMapElement(layersData, name, () => ({
         layer: L.layerGroup(),

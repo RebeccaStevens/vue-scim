@@ -10,6 +10,7 @@ const mapDataStore = useMapDataStore();
 const backgroundLayer = toRef(mapDataStore, "backgroundLayer");
 const detailLayers = toRefs(mapDataStore.detailLayers);
 const resourceNodeLayers = toRefs(mapDataStore.resourceNodeLayers);
+const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
 </script>
 
 <template>
@@ -131,9 +132,27 @@ const resourceNodeLayers = toRefs(mapDataStore.resourceNodeLayers);
         </div>
       </q-tab-panel>
 
-      <q-tab-panel name="wells">
-        <div class="text-h6">Movies</div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+      <q-tab-panel name="wells" class="well-layers">
+        <div
+          v-for="[resource, resourceWellLayer] in Object.entries(resourceWellLayers)"
+          :key="resource"
+          class="resource"
+        >
+          <div class="label">
+            <span>{{ t(`resources.${resource}.name`) }}</span>
+          </div>
+          <div
+            v-for="[purity, { show, iconSrcSet }] in Object.entries(resourceWellLayer.value)"
+            :key="purity"
+          >
+            <ImageToggleButton
+              :class="purity"
+              :srcSet="iconSrcSet"
+              :value="show"
+              @change="mapDataStore.toggleResourceWellLayer(resource, purity)"
+            />
+          </div>
+        </div>
       </q-tab-panel>
     </q-tab-panels>
   </q-card-section>
@@ -182,7 +201,8 @@ const resourceNodeLayers = toRefs(mapDataStore.resourceNodeLayers);
   }
 }
 
-.node-layers {
+.node-layers,
+.well-layers {
   display: grid;
   grid-template-columns: 1fr repeat(3, min-content);
   gap: 0.25rem;

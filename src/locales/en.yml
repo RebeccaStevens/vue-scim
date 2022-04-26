@@ -103,3 +103,9 @@ resources:
     name: Crude Oil
   samOre:
     name: S.A.M. Ore
+  nitrogenGas:
+    name: Nitrogen Gas
+  water:
+    name: Water
+  geyser:
+    name: Geyser
