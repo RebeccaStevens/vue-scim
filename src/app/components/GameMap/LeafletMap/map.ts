@@ -69,7 +69,10 @@ export async function setMapVersion<V extends keyof typeof backgroundLayers>(
   map: L.Map,
   version: V
 ): Promise<MapInstance<V>> {
-  const mapVersionData = setupMapVersion(map, version);
+  const { cleanup: cleanupMapVersion, ...mapVersionData } = setupMapVersion(
+    map,
+    version
+  );
 
   const layerName = mapDataStore.backgroundLayer;
   const layer = mapVersionData.layers.get(layerName);
@@ -82,7 +85,15 @@ export async function setMapVersion<V extends keyof typeof backgroundLayers>(
 
   const detailLayers = await loadDetails(map, version);
 
-  const { cleanup, layerPOIs } = setupDetailLayerToggles(detailLayers, map);
+  const { cleanup: cleanupDetailLayer, layerPOIs } = setupDetailLayerToggles(
+    detailLayers,
+    map
+  );
+
+  const cleanup = () => {
+    cleanupMapVersion();
+    cleanupDetailLayer();
+  };
 
   return {
     ...mapVersionData,
@@ -141,14 +152,35 @@ function setupMapVersion<V extends keyof typeof backgroundLayers>(
   version: V
 ) {
   const bounds = getBounds(map);
-  map.setMaxBounds(bounds.pad(0.1));
+  const maxBounds = bounds.pad(0.1);
+
+  map.setMaxBounds(maxBounds);
   map.fitBounds(bounds);
 
   const layers = setupMapLayers(version, bounds);
 
+  const setMinZoom = () => {
+    const oldMinZoom = map.getMinZoom();
+    const oldZoom = map.getZoom();
+
+    map.setMinZoom(0);
+    const newMinZoom = Math.max(map.getBoundsZoom(maxBounds, false), 0.5);
+    const newZoom = map.getScaleZoom(newMinZoom / oldMinZoom, oldZoom);
+
+    map.setMinZoom(newMinZoom);
+    map.setZoom(newZoom);
+  };
+
+  setMinZoom();
+  map.addEventListener("resize", setMinZoom);
+  const cleanup = () => {
+    map.removeEventListener("resize", setMinZoom);
+  };
+
   return {
     bounds,
     layers,
+    cleanup,
   };
 }
 
