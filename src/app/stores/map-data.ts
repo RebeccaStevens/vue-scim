@@ -1,10 +1,12 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 
-import type { MapLayerName } from "~/components/GameMap/LeafletMap/map";
+export const backgroundLayers = {
+  EarlyAccess: ["gameLayer", "realisticLayer"],
+} as const;
 
-const purities = ["impure", "normal", "pure"] as const;
+export const purities = ["impure", "normal", "pure"] as const;
 
-const resourceNodes = [
+export const resourceNodes = [
   "ironOre",
   "copperOre",
   "limestone",
@@ -18,9 +20,14 @@ const resourceNodes = [
   "samOre",
 ] as const;
 
-const resourceWells = ["nitrogenGas", "crudeOil", "water", "geyser"] as const;
+export const resourceWells = [
+  "nitrogenGas",
+  "crudeOil",
+  "water",
+  "geyser",
+] as const;
 
-const details = [
+export const details = [
   "spawn",
   "worldBorder",
   "sporeFlowers",
@@ -33,7 +40,12 @@ const details = [
 
 export const useMapDataStore = defineStore("map-data", {
   state: () => {
-    const backgroundLayer = "gameLayer" as MapLayerName;
+    const mapVersion = Object.keys(
+      backgroundLayers
+    )[0] as keyof typeof backgroundLayers;
+
+    const backgroundLayer = backgroundLayers
+      .EarlyAccess[0] as typeof backgroundLayers.EarlyAccess[number];
 
     const detailLayers = Object.fromEntries(
       details.map((name) => [name, createButtonData()])
@@ -48,6 +60,7 @@ export const useMapDataStore = defineStore("map-data", {
     ) as Record<typeof resourceWells[number], ResourceData>;
 
     return {
+      mapVersion,
       backgroundLayer,
       detailLayers,
       resourceNodeLayers,
@@ -56,12 +69,12 @@ export const useMapDataStore = defineStore("map-data", {
   },
 
   actions: {
-    switchToGameLayer() {
-      this.backgroundLayer = "gameLayer";
-    },
-
-    switchToRealisticLayer() {
-      this.backgroundLayer = "realisticLayer";
+    setMapVersion<V extends keyof typeof backgroundLayers>(
+      version: V,
+      layer: typeof backgroundLayers[V][number]
+    ) {
+      this.mapVersion = version;
+      this.backgroundLayer = layer;
     },
 
     toggleDetailLayer(type: typeof details[number]) {

@@ -5,30 +5,22 @@ import "leaflet/dist/leaflet.css";
 import type { WatchStopHandle } from "vue";
 
 import type { ResourceData } from "~/stores/map-data";
-import { useMapDataStore } from "~/stores/map-data";
+import { backgroundLayers, useMapDataStore } from "~/stores/map-data";
 import { transpose, getResourcePurityId } from "~/utils";
 
 import type { LayersDataMap, POIs } from "./details";
 import { loadDetails } from "./details";
 import { getBounds, tileSize } from "./utils";
 
-export type MapInstance = Readonly<{
+export type MapInstance<V extends keyof typeof backgroundLayers> = Readonly<{
   map: L.Map;
-  layers: Map<MapVersionName[number], L.TileLayer>;
+  layers: Map<typeof backgroundLayers[V][number], L.TileLayer>;
   bounds: L.LatLngBoundsExpression;
   layerPOIs: POIs[];
   cleanup: () => void;
 }>;
 
-export type MapVersionNames = typeof mapVersions;
-export type MapVersionName = keyof MapVersionNames;
-export type MapLayerName = MapVersionNames[MapVersionName][number];
-
 const mapDataStore = useMapDataStore();
-
-const mapVersions = {
-  EarlyAccess: ["gameLayer", "realisticLayer"],
-} as const;
 
 const zoomOptions = {
   min: 0.5,
@@ -44,10 +36,10 @@ const zoomOptions = {
  *
  * @param containerId - The id of the html container element the map should be mounted into.
  */
-export async function createMap(
+export async function createMap<V extends keyof typeof backgroundLayers>(
   containerId: string,
-  versionName: MapVersionName
-): Promise<MapInstance> {
+  versionName: V
+): Promise<MapInstance<V>> {
   const map = L.map(containerId, {
     crs: L.CRS.Simple,
     minZoom: zoomOptions.min,
@@ -73,10 +65,10 @@ export async function createMap(
  * @param map - The map.
  * @param version - The name of the map version.
  */
-export async function setMapVersion(
+export async function setMapVersion<V extends keyof typeof backgroundLayers>(
   map: L.Map,
-  version: MapVersionName
-): Promise<MapInstance> {
+  version: V
+): Promise<MapInstance<V>> {
   const mapVersionData = setupMapVersion(map, version);
 
   const layerName = mapDataStore.backgroundLayer;
@@ -101,27 +93,40 @@ export async function setMapVersion(
 }
 
 /**
- * Set the active/visible background layer of the leaflet map.
+ * Make the background layer of the leaflet map change.
+ *
+ * To be called when a relevant user event is detected.
  *
  * @param mapInstance - The map data.
- * @param layerName - The name of the layer to make visible.
+ * @param newLayerName - The name of the layer to make visible.
+ * @param oldLayerName - The name of the layer currently visible.
  */
-export function setMapBackgroundLayer(
-  mapInstance: MapInstance,
-  layerName: MapLayerName
+export function onMapBackgroundLayerChange<
+  V extends keyof typeof backgroundLayers
+>(
+  mapInstance: MapInstance<V>,
+  newLayerName: typeof backgroundLayers[V][number],
+  oldLayerName?: typeof backgroundLayers[V][number]
 ) {
-  const currentLayer = mapInstance.layers.get(mapDataStore.backgroundLayer);
-  if (currentLayer !== undefined) {
-    mapInstance.map.removeLayer(currentLayer);
-  }
-
-  const newLayer = mapInstance.layers.get(layerName);
   console.assert(
-    newLayer !== undefined,
-    `Could not find the layer with name "${layerName}"`
+    newLayerName !== oldLayerName,
+    `Background layer "${newLayerName}" already set.`
   );
 
-  mapDataStore.backgroundLayer = layerName;
+  // TODO: Delay removal.
+  // https://github.com/Leaflet/Leaflet/issues/8192
+  const oldLayer = mapInstance.layers.get(oldLayerName);
+  if (oldLayer !== undefined) {
+    mapInstance.map.removeLayer(oldLayer);
+  }
+
+  const newLayer = mapInstance.layers.get(newLayerName);
+  console.assert(
+    newLayer !== undefined,
+    `Could not find the layer with name "${newLayerName}"`
+  );
+
+  mapDataStore.backgroundLayer = newLayerName;
   mapInstance.map.addLayer(newLayer);
 }
 
@@ -131,7 +136,10 @@ export function setMapBackgroundLayer(
  * @param map - The map.
  * @param version - The name of the map version.
  */
-function setupMapVersion(map: L.Map, version: MapVersionName) {
+function setupMapVersion<V extends keyof typeof backgroundLayers>(
+  map: L.Map,
+  version: V
+) {
   const bounds = getBounds(map);
   map.setMaxBounds(bounds.pad(0.1));
   map.fitBounds(bounds);
@@ -151,8 +159,8 @@ function setupMapVersion(map: L.Map, version: MapVersionName) {
  * @param bounds - The bounds of the leaflet map.
  * @returns The layers of the map.
  */
-function setupMapLayers(
-  version: MapVersionName,
+function setupMapLayers<V extends keyof typeof backgroundLayers>(
+  version: V,
   bounds: L.LatLngBoundsExpression
 ) {
   const options: L.TileLayerOptions = {
@@ -167,7 +175,7 @@ function setupMapLayers(
   };
 
   return new Map(
-    mapVersions[version].map((layer) => [
+    backgroundLayers[version].map((layer) => [
       layer,
       L.tileLayer(`/img/map/${version}/${layer}/{z}/{x}/{y}.webp`, options),
     ])

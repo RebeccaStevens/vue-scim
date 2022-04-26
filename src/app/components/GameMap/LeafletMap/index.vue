@@ -1,23 +1,22 @@
 <script setup lang="ts">
+import type { backgroundLayers } from "~/stores/map-data";
 import { useMapDataStore } from "~/stores/map-data";
 
 import type { MapInstance } from "./map";
-import { createMap, setMapBackgroundLayer } from "./map";
-
-const mapVersion = "EarlyAccess" as const;
+import { createMap, onMapBackgroundLayerChange } from "./map";
 
 const mapDataStore = useMapDataStore();
 
-const mapInstance = ref<MapInstance>();
+const mapInstance = ref<MapInstance<keyof typeof backgroundLayers>>();
 
-watch(toRef(mapDataStore, "backgroundLayer"), (layerName) => {
+watch(toRef(mapDataStore, "backgroundLayer"), (newLayer, oldLayer) => {
   if (mapInstance.value !== undefined) {
-    setMapBackgroundLayer(mapInstance.value, layerName);
+    onMapBackgroundLayerChange(mapInstance.value, newLayer, oldLayer);
   }
 });
 
 async function setupMap() {
-  mapInstance.value = await createMap("leaflet-game-map-container", mapVersion);
+  mapInstance.value = await createMap("leaflet-game-map-container", mapDataStore.mapVersion);
 }
 
 function cleanup() {

@@ -7,7 +7,6 @@ import { useMapDataStore } from "~/stores/map-data";
 import { getOrCreateMapElement, getResourcePurityId } from "~/utils";
 
 import { polygonLine } from "./draw-extendsions";
-import type { MapVersionName } from "./map";
 import * as mapUtils from "./utils";
 import { convertToMapUnit } from "./utils";
 
@@ -230,7 +229,10 @@ function createMapIcon(pois: LabeledPOIs): () => L.DivIcon {
  * @param map - The ma.
  * @param mapVersion - The version of the map to load the details of.
  */
-export async function loadDetails(map: L.Map, mapVersion: MapVersionName) {
+export async function loadDetails(
+  map: L.Map,
+  mapVersion: typeof mapDataStore.mapVersion
+) {
   const request = await fetch(`/data/map/${mapVersion}/details.json`);
   const details = (await request.json()) as MapDetailsData;
 

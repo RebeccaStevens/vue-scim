@@ -51,7 +51,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
             :value="backgroundLayer === 'gameLayer'"
             @change="(value: boolean) => {
               if (value) {
-                mapDataStore.switchToGameLayer()
+                mapDataStore.setMapVersion(mapDataStore.mapVersion, 'gameLayer')
               }
             }"
           />
@@ -61,7 +61,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
             :value="backgroundLayer === 'realisticLayer'"
             @change="(value: boolean) => {
               if (value) {
-                mapDataStore.switchToRealisticLayer()
+                mapDataStore.setMapVersion(mapDataStore.mapVersion, 'realisticLayer')
               }
             }"
           />
