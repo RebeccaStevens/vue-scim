@@ -41,7 +41,7 @@ module.exports = {
     "vue/multi-word-component-names": [
       "error",
       {
-        ignores: ["index"],
+        ignores: ["index", "Footer"],
       },
     ],
     // @see https://github.com/sindresorhus/eslint-plugin-unicorn/issues/1788

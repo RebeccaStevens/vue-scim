@@ -27,6 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>();
 
 const onChange = () => {
+  console.assert(typeof props.value === "boolean");
   emit("change", !props.value);
 };
 </script>
