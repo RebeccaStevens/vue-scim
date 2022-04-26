@@ -33,7 +33,7 @@ const onSaveGameChosen = () => {
       size="sm"
       v-show="hasGameSave"
       icon="i-carbon-analytics"
-      :label="t('Statistics')"
+      :label="t('navigation.pages.interactive-map.actions.statistics.label')"
     ></q-btn>
     <q-btn
       flat
@@ -41,7 +41,7 @@ const onSaveGameChosen = () => {
       size="sm"
       v-show="hasGameSave"
       icon="i-clarity-flask-solid"
-      :label="t('Research')"
+      :label="t('navigation.pages.interactive-map.actions.research.label')"
     ></q-btn>
     <q-btn
       flat
@@ -49,7 +49,7 @@ const onSaveGameChosen = () => {
       size="sm"
       v-show="hasGameSave"
       icon="i-fa6-solid-gears"
-      :label="t('Options')"
+      :label="t('navigation.pages.interactive-map.actions.options.label')"
     ></q-btn>
     <q-btn
       flat
@@ -58,7 +58,7 @@ const onSaveGameChosen = () => {
       v-show="hasGameSave"
       @click="onButtonDownload"
       icon="i-carbon-download"
-      :label="t('Download')"
+      :label="t('navigation.pages.interactive-map.actions.download.label')"
     ></q-btn>
     <q-btn
       :flat="hasGameSave"
@@ -67,7 +67,11 @@ const onSaveGameChosen = () => {
       class="load-btn"
       @click="onButtonLoad"
       icon="i-carbon-upload"
-      :label="hasGameSave ? t('Load') : t('Load Save Game')"
+      :label="
+        hasGameSave
+          ? t('navigation.pages.interactive-map.actions.load.short-label')
+          : t('navigation.pages.interactive-map.actions.load.label')
+      "
     ></q-btn>
     <input
       ref="inputSaveGame"

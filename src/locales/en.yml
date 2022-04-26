@@ -16,6 +16,26 @@ navigation:
 
     interactive-map:
       label: Interactive Map
+      actions:
+        statistics:
+          label: Statistics
+        research:
+          label: Research
+        options:
+          label: Options
+        download:
+          label: Download
+        load:
+          label: Load Save Game
+          short-label: Load
+      controls:
+        static-elements:
+          details:
+            label: Map Layers
+          nodes:
+            label: Resource Nodes
+          wells:
+            label: Resource Wells
 
     game-resources:
       label: Game Resources

@@ -26,9 +26,18 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
       right-icon="i-carbon-arrow-right"
       no-caps
     >
-      <q-tab name="details" :label="t('Map layers')" />
-      <q-tab name="nodes" :label="t('Resource Nodes')" />
-      <q-tab name="wells" :label="t('Resource Wells')" />
+      <q-tab
+        name="details"
+        :label="t('navigation.pages.interactive-map.controls.static-elements.details.label')"
+      />
+      <q-tab
+        name="nodes"
+        :label="t('navigation.pages.interactive-map.controls.static-elements.nodes.label')"
+      />
+      <q-tab
+        name="wells"
+        :label="t('navigation.pages.interactive-map.controls.static-elements.wells.label')"
+      />
     </q-tabs>
 
     <q-separator />
