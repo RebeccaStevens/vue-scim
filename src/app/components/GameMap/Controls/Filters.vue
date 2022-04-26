@@ -14,19 +14,19 @@ const nodes = [
     children: [
       {
         title: "Foundations",
-        imgSrcSet: images.gameUpdate5.IconDesc_FicsitFoundation4m,
+        imgSrcset: images.gameUpdate5.IconDesc_FicsitFoundation4m,
         children: [
           {
             title: "Foundation 1m",
-            imgSrcSet: images.gameUpdate5.IconDesc_FicsitFoundation1m,
+            imgSrcset: images.gameUpdate5.IconDesc_FicsitFoundation1m,
           },
           {
             title: "Foundation 2m",
-            imgSrcSet: images.gameUpdate5.IconDesc_FicsitFoundation2m,
+            imgSrcset: images.gameUpdate5.IconDesc_FicsitFoundation2m,
           },
           {
             title: "Foundation 4m",
-            imgSrcSet: images.gameUpdate5.IconDesc_FicsitFoundation4m,
+            imgSrcset: images.gameUpdate5.IconDesc_FicsitFoundation4m,
           },
         ],
       },

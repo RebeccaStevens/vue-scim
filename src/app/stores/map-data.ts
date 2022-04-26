@@ -100,7 +100,7 @@ export const useMapDataStore = defineStore("map-data", {
     registerResourceNodeLayerIcon(
       resource: string,
       purity: string,
-      srcSet: string
+      srcset: string
     ) {
       console.assert(
         isResourceNodesName(resource),
@@ -110,13 +110,13 @@ export const useMapDataStore = defineStore("map-data", {
         isPurityName(purity),
         `"${purity}" is not a valid purity name.`
       );
-      this.resourceNodeLayers[resource][purity].iconSrcSet = srcSet;
+      this.resourceNodeLayers[resource][purity].iconSrcset = srcset;
     },
 
     registerResourceWellLayerIcon(
       resource: string,
       purity: string,
-      srcSet: string
+      srcset: string
     ) {
       console.assert(
         isResourceWellsName(resource),
@@ -126,7 +126,7 @@ export const useMapDataStore = defineStore("map-data", {
         isPurityName(purity),
         `"${purity}" is not a valid purity name.`
       );
-      this.resourceWellLayers[resource][purity].iconSrcSet = srcSet;
+      this.resourceWellLayers[resource][purity].iconSrcset = srcset;
     },
   },
 });
@@ -153,7 +153,7 @@ function createResourceData(): ResourceData {
 
 export type ButtonData = {
   show: boolean;
-  iconSrcSet?: string;
+  iconSrcset?: string;
 };
 
 function createButtonData(): ButtonData {

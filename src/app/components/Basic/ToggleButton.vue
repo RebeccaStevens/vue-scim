@@ -1,13 +1,15 @@
 <script setup lang="ts">
-type Props = {
+import type { QBtnProps } from "quasar";
+
+export type Props = {
   value?: boolean;
-  dense?: boolean;
-  label?: string;
-  noCaps?: boolean;
+  dense?: QBtnProps["dense"];
+  label?: QBtnProps["label"];
+  noCaps?: QBtnProps["noCaps"];
   title?: string;
 };
 
-type Emits = {
+export type Emits = {
   (event: "change", value: boolean): void;
 };
 
@@ -17,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>();
 
-const onClick = (event: MouseEvent) => {
+const onClick = () => {
   emit("change", !props.value);
 };
 

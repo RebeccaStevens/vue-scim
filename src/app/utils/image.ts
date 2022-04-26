@@ -4,7 +4,7 @@ type ImageSrcs = ReadonlyArray<{
   format: string;
 }>;
 
-export function createSrcSet(images: ImageSrcs) {
+export function createSrcset(images: ImageSrcs) {
   return Object.values(images)
     .map((image) => `${image.src} ${image.size}w`)
     .join(", ");

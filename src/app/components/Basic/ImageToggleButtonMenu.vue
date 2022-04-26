@@ -1,7 +1,7 @@
 <script setup lang="ts">
 type Node = {
   imgSrc?: string;
-  imgSrcSet?: string;
+  imgSrcset?: string;
   title?: string;
   children?: ReadonlyArray<Node>;
 };
@@ -18,7 +18,7 @@ const largeMenuSize = 25;
     <template #default="{ activatorAttr, menuAttr }">
       <ImageToggleButton
         :src="node.imgSrc"
-        :srcSet="node.imgSrcSet"
+        :srcset="node.imgSrcset"
         :title="node.title"
         v-bind="activatorAttr"
       >

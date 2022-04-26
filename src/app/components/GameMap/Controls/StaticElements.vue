@@ -47,7 +47,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
         <div class="background-layer-options">
           <ImageToggleButton
             class="option"
-            :srcSet="icons.map.gameLayer"
+            :srcset="icons.map.gameLayer"
             :value="backgroundLayer === 'gameLayer'"
             @change="(value: boolean) => {
               if (value) {
@@ -57,7 +57,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
           />
           <ImageToggleButton
             class="option"
-            :srcSet="icons.map.realisticLayer"
+            :srcset="icons.map.realisticLayer"
             :value="backgroundLayer === 'realisticLayer'"
             @change="(value: boolean) => {
               if (value) {
@@ -89,12 +89,12 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
             <span>{{ t(`resources.${resource}.name`) }}</span>
           </div>
           <div
-            v-for="[purity, { show, iconSrcSet }] in Object.entries(resourceNodeLayer.value)"
+            v-for="[purity, { show, iconSrcset }] in Object.entries(resourceNodeLayer.value)"
             :key="purity"
           >
             <ImageToggleButton
               :class="purity"
-              :srcSet="iconSrcSet"
+              :srcset="iconSrcset"
               :value="show"
               @change="mapDataStore.toggleResourceNodeLayer(resource, purity)"
             />
@@ -112,12 +112,12 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
             <span>{{ t(`resources.${resource}.name`) }}</span>
           </div>
           <div
-            v-for="[purity, { show, iconSrcSet }] in Object.entries(resourceWellLayer.value)"
+            v-for="[purity, { show, iconSrcset }] in Object.entries(resourceWellLayer.value)"
             :key="purity"
           >
             <ImageToggleButton
               :class="purity"
-              :srcSet="iconSrcSet"
+              :srcset="iconSrcset"
               :value="show"
               @change="mapDataStore.toggleResourceWellLayer(resource, purity)"
             />

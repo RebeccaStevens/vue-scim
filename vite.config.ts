@@ -275,7 +275,7 @@ function autoImageIndex() {
             ({ fullName, relPath }) => `import ${fullName} from "${relPath}";\n`
           );
 
-          const exports = `export const ${name} = createSrcSet([${importsData
+          const exports = `export const ${name} = createSrcset([${importsData
             .map(
               ({ fullName, size, format }) =>
                 `{ src: ${fullName}, size: ${size}, format: "${format}" }`
@@ -288,7 +288,7 @@ function autoImageIndex() {
       })
       .filter(<T>(i: T | undefined): i is T => i !== undefined);
 
-    return `/// <reference types="${relRoot}/types" />\nimport { createSrcSet } from "~/utils";\n\n${content.join(
+    return `/// <reference types="${relRoot}/types" />\nimport { createSrcset } from "~/utils";\n\n${content.join(
       "\n"
     )}`;
   };

@@ -1,17 +1,21 @@
 <script setup lang="ts">
-type Props = {
-  src?: string;
-  srcSet?: string;
-  value?: boolean;
-  dense?: boolean;
-  label?: string;
-  noCaps?: boolean;
-  title?: string;
-  ratio?: number;
-  fit?: string;
+import type { QImgProps } from "quasar";
+
+import type { Props as ToggleButtonProps } from "./ToggleButton.vue";
+
+export type Props = {
+  src?: QImgProps["src"];
+  srcset?: QImgProps["srcset"];
+  value?: ToggleButtonProps["value"];
+  dense?: ToggleButtonProps["dense"];
+  label?: ToggleButtonProps["label"];
+  noCaps?: ToggleButtonProps["noCaps"];
+  title?: ToggleButtonProps["title"];
+  ratio?: QImgProps["ratio"];
+  fit?: QImgProps["fit"];
 };
 
-type Emits = {
+export type Emits = {
   (event: "change", value: boolean): void;
 };
 
@@ -37,7 +41,7 @@ const onChange = () => {
     class="image-toggle-button"
     @change="onChange"
   >
-    <q-img :src="src" :srcset="srcSet" :ratio="ratio" :fit="fit" />
+    <q-img :src="src" :srcset="srcset" :ratio="ratio" :fit="fit" />
   </ToggleButton>
 </template>
 
