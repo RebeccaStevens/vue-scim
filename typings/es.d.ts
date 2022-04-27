@@ -50,14 +50,6 @@ declare global {
     get(key: unknown): V | undefined;
     has(key: unknown): boolean;
   }
-
-  interface Console {
-    assert(
-      value: unknown,
-      message?: string,
-      ...optionalParams: unknown[]
-    ): asserts value;
-  }
 }
 
 export {};

@@ -1,3 +1,5 @@
+import assert from "assert";
+
 type Transpose<T extends ReadonlyArray<ReadonlyArray<unknown>>> =
   T extends ReadonlyArray<infer A>
     ? A extends ReadonlyArray<infer B>
@@ -11,7 +13,7 @@ type Transpose<T extends ReadonlyArray<ReadonlyArray<unknown>>> =
 export function transpose<T extends ReadonlyArray<ReadonlyArray<unknown>>>(
   value: T
 ): Transpose<T> {
-  console.assert(value.every((v, i, a) => v.length === a[0].length));
+  assert(value.every((v, i, a) => v.length === a[0].length));
 
   return (value.length === 0
     ? []

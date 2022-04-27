@@ -1,8 +1,11 @@
 /* eslint-disable unicorn/no-array-method-this-argument */
 
+import assert from "assert";
+
 import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import type { WatchStopHandle } from "vue";
+
+import "leaflet/dist/leaflet.css";
 
 import type { ResourceData } from "~/stores/map-data";
 import { backgroundLayers, useMapDataStore } from "~/stores/map-data";
@@ -76,7 +79,7 @@ export async function setMapVersion<V extends keyof typeof backgroundLayers>(
 
   const layerName = mapDataStore.backgroundLayer;
   const layer = mapVersionData.layers.get(layerName);
-  console.assert(
+  assert(
     layer !== undefined,
     `Could not find the layer with name "${layerName}"`
   );
@@ -119,7 +122,7 @@ export function onMapBackgroundLayerChange<
   newLayerName: typeof backgroundLayers[V][number],
   oldLayerName?: typeof backgroundLayers[V][number]
 ) {
-  console.assert(
+  assert(
     newLayerName !== oldLayerName,
     `Background layer "${newLayerName}" already set.`
   );
@@ -132,7 +135,7 @@ export function onMapBackgroundLayerChange<
   }
 
   const newLayer = mapInstance.layers.get(newLayerName);
-  console.assert(
+  assert(
     newLayer !== undefined,
     `Could not find the layer with name "${newLayerName}"`
   );
@@ -227,10 +230,7 @@ function setupDetailLayerToggles(layersDataMap: LayersDataMap, map: L.Map) {
   const [cleanupDetailLayers, layerPOIs] = transpose(
     layerRefs.map(([name, ref, currentValue]) => {
       const detailLayerData = layersDataMap.get(name);
-      console.assert(
-        detailLayerData !== undefined,
-        `Cannot find layer: ${name}`
-      );
+      assert(detailLayerData !== undefined, `Cannot find layer: ${name}`);
 
       const updateFn = (newValue: boolean) => {
         const hasLayer = map.hasLayer(detailLayerData.layer);

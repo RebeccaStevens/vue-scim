@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import assert from "assert";
+
 import type { QImgProps } from "quasar";
 
 import type { Props as ToggleButtonProps } from "./ToggleButton.vue";
@@ -27,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>();
 
 const onChange = () => {
-  console.assert(typeof props.value === "boolean");
+  assert(typeof props.value === "boolean");
   emit("change", !props.value);
 };
 </script>

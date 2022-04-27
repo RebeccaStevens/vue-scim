@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import assert from "assert";
+
 import { useGameSaveStore } from "~/stores/game-save";
 
 const { t } = useI18n();
@@ -9,15 +11,15 @@ const inputSaveGame = ref<HTMLInputElement | null>(null);
 const onButtonDownload = () => {};
 
 const onButtonLoad = () => {
-  console.assert(inputSaveGame.value !== null, "Cannot find input: save game.");
+  assert(inputSaveGame.value !== null, "Cannot find input: save game.");
   inputSaveGame.value.click();
 };
 
 const onSaveGameChosen = () => {
-  console.assert(inputSaveGame.value !== null, "Cannot find input: save game.");
+  assert(inputSaveGame.value !== null, "Cannot find input: save game.");
 
   const file = inputSaveGame.value.files?.[0];
-  console.assert(file !== undefined, "Cannot find chosen file.");
+  assert(file !== undefined, "Cannot find chosen file.");
 
   inputSaveGame.value.value = "";
 

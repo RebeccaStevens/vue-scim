@@ -1,3 +1,5 @@
+import assert from "assert";
+
 type LanguageMeta = Readonly<{
   locale: string;
   name: string;
@@ -23,14 +25,14 @@ export function useLanguages() {
     languages.map((lang) => [lang.locale, lang])
   );
 
-  console.assert(
+  assert(
     availableLocales.every((lang) => languageMeta.has(lang)),
     "Every avaliable locale should be listed in the language meta data."
   );
 
   const currentLanguageMeta = languageMeta.get(locale.value);
 
-  console.assert(
+  assert(
     currentLanguageMeta !== undefined,
     "Cannot find the language meta data for the current language."
   );

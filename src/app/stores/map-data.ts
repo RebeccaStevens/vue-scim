@@ -1,3 +1,5 @@
+import assert from "assert";
+
 import { acceptHMRUpdate, defineStore } from "pinia";
 
 export const backgroundLayers = {
@@ -102,14 +104,11 @@ export const useMapDataStore = defineStore("map-data", {
       purity: string,
       srcset: string
     ) {
-      console.assert(
+      assert(
         isResourceNodesName(resource),
         `"${resource}" is not a valid resource node name.`
       );
-      console.assert(
-        isPurityName(purity),
-        `"${purity}" is not a valid purity name.`
-      );
+      assert(isPurityName(purity), `"${purity}" is not a valid purity name.`);
       this.resourceNodeLayers[resource][purity].iconSrcset = srcset;
     },
 
@@ -118,14 +117,11 @@ export const useMapDataStore = defineStore("map-data", {
       purity: string,
       srcset: string
     ) {
-      console.assert(
+      assert(
         isResourceWellsName(resource),
         `"${resource}" is not a valid resource well name.`
       );
-      console.assert(
-        isPurityName(purity),
-        `"${purity}" is not a valid purity name.`
-      );
+      assert(isPurityName(purity), `"${purity}" is not a valid purity name.`);
       this.resourceWellLayers[resource][purity].iconSrcset = srcset;
     },
   },

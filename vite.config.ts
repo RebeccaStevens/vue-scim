@@ -3,15 +3,17 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
+import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
+import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 import ImportMetaEnvPlugin from "@import-meta-env/unplugin";
 import VueI18n from "@intlify/vite-plugin-vue-i18n";
 import { quasar, transformAssetUrls } from "@quasar/vite-plugin";
 import Vue from "@vitejs/plugin-vue";
-import type { TransformFactory } from "imagetools-core";
-import * as imagetools from "imagetools-core";
 import { pipe, page, map } from "iter-ops";
 import LinkAttributes from "markdown-it-link-attributes";
 import Prism from "markdown-it-prism";
+import rollupNodePolyFill from "rollup-plugin-node-polyfills";
+import rollupUnassert from "rollup-plugin-unassert";
 import type { FormatEnum } from "sharp";
 import sharp from "sharp";
 import Unocss from "unocss/vite";
@@ -40,21 +42,75 @@ export default defineConfig(({ command, mode }) => {
   return {
     root: "src",
 
-    // resolve: {
-    //   alias: {
-    //     vue: "vue/dist/vue.esm-bundler",
-    //   },
-    // },
+    resolve: {
+      alias: {
+        // vue: "vue/dist/vue.esm-bundler",
+        _stream_duplex:
+          "rollup-plugin-node-polyfills/polyfills/readable-stream/duplex",
+        _stream_passthrough:
+          "rollup-plugin-node-polyfills/polyfills/readable-stream/passthrough",
+        _stream_readable:
+          "rollup-plugin-node-polyfills/polyfills/readable-stream/readable",
+        _stream_transform:
+          "rollup-plugin-node-polyfills/polyfills/readable-stream/transform",
+        _stream_writable:
+          "rollup-plugin-node-polyfills/polyfills/readable-stream/writable",
+        assert: "rollup-plugin-node-polyfills/polyfills/assert",
+        console: "rollup-plugin-node-polyfills/polyfills/console",
+        constants: "rollup-plugin-node-polyfills/polyfills/constants",
+        domain: "rollup-plugin-node-polyfills/polyfills/domain",
+        events: "rollup-plugin-node-polyfills/polyfills/events",
+        http: "rollup-plugin-node-polyfills/polyfills/http",
+        https: "rollup-plugin-node-polyfills/polyfills/http",
+        os: "rollup-plugin-node-polyfills/polyfills/os",
+        path: "rollup-plugin-node-polyfills/polyfills/path",
+        punycode: "rollup-plugin-node-polyfills/polyfills/punycode",
+        querystring: "rollup-plugin-node-polyfills/polyfills/qs",
+        stream: "rollup-plugin-node-polyfills/polyfills/stream",
+        string_decoder: "rollup-plugin-node-polyfills/polyfills/string-decoder",
+        sys: "util",
+        timers: "rollup-plugin-node-polyfills/polyfills/timers",
+        tty: "rollup-plugin-node-polyfills/polyfills/tty",
+        url: "rollup-plugin-node-polyfills/polyfills/url",
+        util: "rollup-plugin-node-polyfills/polyfills/util",
+        vm: "rollup-plugin-node-polyfills/polyfills/vm",
+        zlib: "rollup-plugin-node-polyfills/polyfills/zlib",
+      },
+    },
+
+    optimizeDeps: {
+      esbuildOptions: {
+        // Node.js global to browser globalThis
+        define: {
+          global: "globalThis",
+        },
+        // Enable esbuild polyfill plugins
+        plugins: [
+          NodeGlobalsPolyfillPlugin({
+            process: true,
+            buffer: true,
+          }),
+          NodeModulesPolyfillPlugin(),
+        ],
+      },
+    },
 
     build: {
       outDir: path.resolve(dirname, "dist"),
       emptyOutDir: true,
       // ssr: true,
-      target: mode === "production" ? "es2018" : "esnext",
+      target: "es2018",
       rollupOptions: {
         output: {
           inlineDynamicImports: false,
         },
+        plugins: [
+          rollupNodePolyFill(),
+          rollupUnassert({
+            // TODO: also unassert in vue files.
+            include: ["**/*.ts"],
+          }),
+        ],
       },
     },
 

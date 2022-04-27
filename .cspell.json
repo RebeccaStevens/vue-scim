@@ -45,6 +45,8 @@
     "unprojected",
     "unprojecting",
     "composables",
+    "esbuild",
+    "unassert",
     "demi",
     "dicom",
     "iconify",
