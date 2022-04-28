@@ -20,6 +20,8 @@ export const install: UserModule = ({ app }) => {
     legacy: false,
     locale: "en-US",
     messages,
+    fallbackWarn: false,
+    missingWarn: false,
   });
 
   app.use(i18n);

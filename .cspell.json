@@ -98,6 +98,10 @@
       "words": []
     },
     {
+      "filename": "src/locales/en.yml",
+      "language": "en"
+    },
+    {
       "filename": "src/locales/en-US.yml",
       "language": "en-US"
     },

@@ -63,7 +63,7 @@ const menu = useMainMenu();
             <q-item-section avatar>
               <q-icon :name="language.icon"></q-icon>
             </q-item-section>
-            <q-item-section>{{ language.name }}</q-item-section>
+            <q-item-section>{{ t("language", "", { locale: language.locale }) }}</q-item-section>
           </q-item>
         </q-list>
       </q-btn-dropdown>
