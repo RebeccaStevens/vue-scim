@@ -7,9 +7,9 @@
     "eslint --fix"
   ],
   "./**/*.{ts,vue,md}": [
-    "cspell --config=.cspell.json \"**/*.{ts,vue,md}\""
+    "cspell --config=.cspell.json"
   ],
   "./src/locales/en.yml": [
-    "cspell --config=.cspell.json \"./src/locales/en.yml\""
+    "cspell --config=.cspell.locale.json --locale=en"
   ]
 }

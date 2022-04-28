@@ -31,7 +31,8 @@
     "vue"
   ],
   "vite.autoStart": true,
-  "vite.port": 3000,
+  "vite.buildCommand": "pnpm build",
+  "vite.devCommand": "pnpm dev",
   "volar.formatting.printWidth": 100,
   "volar.takeOverMode.enabled": true,
   "[vue]": {
