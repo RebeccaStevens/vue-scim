@@ -54,6 +54,7 @@ export default defineConfig({
     "i-clarity-flask-solid",
     "i-emojione-crescent-moon",
     "i-emojione-flag-for-united-states",
+    "i-emojione-flag-for-united-kingdom",
     "i-emojione-sun",
     "i-ic-baseline-arrow-drop-down",
     "i-ic-play-arrow",

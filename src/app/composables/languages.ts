@@ -9,8 +9,13 @@ type LanguageMeta = Readonly<{
 const languages: ReadonlyArray<LanguageMeta> = [
   {
     locale: "en-US",
-    name: "English",
+    name: "English (US)",
     icon: "i-emojione-flag-for-united-states",
+  },
+  {
+    locale: "en-GB",
+    name: "English (GB)",
+    icon: "i-emojione-flag-for-united-kingdom",
   },
 ];
 

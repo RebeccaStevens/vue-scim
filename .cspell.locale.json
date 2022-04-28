@@ -1,6 +1,0 @@
-{
-  "version": "0.2",
-  "ignoreRegExpList": [
-    "/([a-z0-9]|-|_|\"|')+:/ugi"
-  ]
-}

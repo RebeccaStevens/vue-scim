@@ -88,6 +88,22 @@
         "/\\/\\*[\\s\\S]*?\\*\\/|([^\\\\:]|^)\\/\\/.*$/",
         "/(\\/\\/[^\\n\\r]*[\\n\\r]+)/"
       ]
+    },
+    {
+      "filename": "src/locales/*.yml",
+      "ignoreRegExpList": [
+        "/([a-z0-9]|-|_|\"|')+:/ugi"
+      ],
+      "dictionaries": [],
+      "words": []
+    },
+    {
+      "filename": "src/locales/en-US.yml",
+      "language": "en-US"
+    },
+    {
+      "filename": "src/locales/en-GB.yml",
+      "language": "en-GB"
     }
   ]
 }

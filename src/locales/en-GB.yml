@@ -1,0 +1,149 @@
+navigation:
+  back:
+    label: Back
+
+  pages:
+    home:
+      label: Home
+
+    planners:
+      label: Planners
+      submenu:
+        production:
+          label: Production planner
+        power:
+          label: Power planner
+
+    interactive-map:
+      label: Interactive Map
+      actions:
+        statistics:
+          label: Statistics
+        research:
+          label: Research
+        options:
+          label: Options
+        download:
+          label: Download
+        load:
+          label: Load Save Game
+          short-label: Load
+      controls:
+        static-elements:
+          details:
+            label: Map Layers
+          nodes:
+            label: Resource Nodes
+          wells:
+            label: Resource Wells
+
+    game-resources:
+      label: Game Resources
+      submenu:
+        buildings:
+          label: Buildings
+        architecture:
+          label: Architecture
+        structures:
+          label: Structures
+        items:
+          label: Items
+        tools:
+          label: Tools
+        vehicles:
+          label: Vehicles
+        fauna:
+          label: Fauna
+        statuses:
+          label: Statuses
+        ficsmas:
+          label: FICSMAS Holiday Event
+
+    game-progression:
+      label: Game Progression
+      submenu:
+        milestones:
+          label: Milestones
+        mam:
+          label: M.A.M.
+        awesome-shop:
+          label: AWESOME Shop
+        tetromino:
+          label: FICSIT Productive Packer Deluxe | World Leaderboard
+
+    blueprints:
+      label: Blueprints
+
+    workbench:
+      label: Workbench
+      submenu:
+        mods:
+          label: Mods
+        color:
+          label: Color converter
+        hard-drives:
+          label: Hard Drives
+        balancers:
+          label: Balancers
+
+dark-mode:
+  button:
+    toggle:
+      title: Toggle dark mode
+
+language:
+  button:
+    change:
+      title: Change language
+    set:
+      title: Change language to {language}
+
+not-found: Not found
+
+resources:
+  ironOre:
+    name: Iron Ore
+  copperOre:
+    name: Copper Ore
+  limestone:
+    name: Limestone
+  coal:
+    name: Coal
+  cateriumOre:
+    name: Caterium Ore
+  rawQuartz:
+    name: Raw Quartz
+  sulfur:
+    name: Sulphur
+  uranium:
+    name: Uranium
+  bauxite:
+    name: Bauxite
+  crudeOil:
+    name: Crude Oil
+  samOre:
+    name: S.A.M. Ore
+  nitrogenGas:
+    name: Nitrogen Gas
+  water:
+    name: Water
+  geyser:
+    name: Geyser
+
+detail-layers:
+  spawn:
+    label: Spawn Locations
+  worldBorder:
+    label: World Border
+  sporeFlowers:
+    label: Spore Flowers
+  pillars:
+    label: Gas Pillars
+  smallRocks:
+    label: Small Rocks
+  largeRocks:
+    label: Large Rocks
+  caves:
+    label: Caves
+  roads:
+    label: Roads
