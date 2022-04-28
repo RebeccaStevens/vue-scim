@@ -35,12 +35,14 @@ export function useLanguages() {
     "Every avaliable locale should be listed in the language meta data."
   );
 
-  const currentLanguageMeta = languageMeta.get(locale.value);
-
-  assert.isDefined(
-    currentLanguageMeta,
-    "Cannot find the language meta data for the current language."
-  );
+  const currentLanguageMeta = computed(() => {
+    const meta = languageMeta.get(locale.value);
+    assert.isDefined(
+      meta,
+      "Cannot find the language meta data for the current language."
+    );
+    return meta;
+  });
 
   return {
     setLanguage,
