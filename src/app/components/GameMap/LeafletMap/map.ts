@@ -1,12 +1,11 @@
 /* eslint-disable unicorn/no-array-method-this-argument */
 
-import assert from "assert";
-
 import L from "leaflet";
 import type { WatchStopHandle } from "vue";
 
 import "leaflet/dist/leaflet.css";
 
+import * as assert from "~/assert";
 import type { ResourceData } from "~/stores/map-data";
 import { backgroundLayers, useMapDataStore } from "~/stores/map-data";
 import { transpose, getResourcePurityId } from "~/utils";
@@ -79,10 +78,7 @@ export async function setMapVersion<V extends keyof typeof backgroundLayers>(
 
   const layerName = mapDataStore.backgroundLayer;
   const layer = mapVersionData.layers.get(layerName);
-  assert(
-    layer !== undefined,
-    `Could not find the layer with name "${layerName}"`
-  );
+  assert.isDefined(layer, `Could not find the layer with name "${layerName}"`);
 
   map.addLayer(layer);
 
@@ -122,21 +118,23 @@ export function onMapBackgroundLayerChange<
   newLayerName: typeof backgroundLayers[V][number],
   oldLayerName?: typeof backgroundLayers[V][number]
 ) {
-  assert(
-    newLayerName !== oldLayerName,
+  assert.notEqual(
+    newLayerName,
+    oldLayerName,
     `Background layer "${newLayerName}" already set.`
   );
 
   // TODO: Delay removal.
   // https://github.com/Leaflet/Leaflet/issues/8192
-  const oldLayer = mapInstance.layers.get(oldLayerName);
-  if (oldLayer !== undefined) {
+  if (oldLayerName !== undefined) {
+    const oldLayer = mapInstance.layers.get(oldLayerName);
+    assert.isDefined(oldLayer);
     mapInstance.map.removeLayer(oldLayer);
   }
 
   const newLayer = mapInstance.layers.get(newLayerName);
-  assert(
-    newLayer !== undefined,
+  assert.isDefined(
+    newLayer,
     `Could not find the layer with name "${newLayerName}"`
   );
 
@@ -230,7 +228,7 @@ function setupDetailLayerToggles(layersDataMap: LayersDataMap, map: L.Map) {
   const [cleanupDetailLayers, layerPOIs] = transpose(
     layerRefs.map(([name, ref, currentValue]) => {
       const detailLayerData = layersDataMap.get(name);
-      assert(detailLayerData !== undefined, `Cannot find layer: ${name}`);
+      assert.isDefined(detailLayerData, `Cannot find layer: ${name}`);
 
       const updateFn = (newValue: boolean) => {
         const hasLayer = map.hasLayer(detailLayerData.layer);

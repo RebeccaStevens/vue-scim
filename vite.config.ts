@@ -107,8 +107,16 @@ export default defineConfig(({ command, mode }) => {
         plugins: [
           rollupNodePolyFill(),
           rollupUnassert({
-            // TODO: also unassert in vue files.
             include: ["**/*.ts"],
+            importPatterns: [
+              'import assert from "assert"',
+              'import * as assert from "assert"',
+              'import * as assert from "~/assert"',
+            ],
+            requirePatterns: [
+              'assert = require("assert")',
+              'assert = require("~/assert")',
+            ],
           }),
         ],
       },

@@ -24,6 +24,9 @@
     "baseUrl": "./src",
     "rootDir": "./",
     "paths": {
+      "~/assert": [
+        "assert/index.ts"
+      ],
       "~/icons": [
         "app/raw/img/icons/index.ts"
       ],
