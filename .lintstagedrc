@@ -9,7 +9,7 @@
   "./**/*.{ts,vue,md}": [
     "cspell --config=.cspell.json"
   ],
-  "./src/locales/en.yml": [
-    "cspell --config=.cspell.locale.json --locale=en"
+  "./src/locales/en-US.yml": [
+    "cspell --config=.cspell.locale.json --locale=en-US"
   ]
 }

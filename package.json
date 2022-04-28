@@ -13,7 +13,7 @@
     "prepare": "husky install",
     "preview": "vite preview --port 5050",
     "preview-https": "serve dist",
-    "spell-check": "cspell --config=.cspell.json \"**/*.{md,ts,vue}\" && cspell --config=.cspell.locale.json --locale=en \"./src/locales/en.yml\"",
+    "spell-check": "cspell --config=.cspell.json \"**/*.{md,ts,vue}\" && cspell --config=.cspell.locale.json --locale=en-US \"./src/locales/en-US.yml\"",
     "test": "vitest",
     "test:e2e": "cypress open",
     "test:unit": "vitest",
