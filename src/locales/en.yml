@@ -1,151 +1,204 @@
-language: English
+language: english
 
 navigation:
   back:
-    label: Back
+    label: back
 
-  pages:
-    home:
-      label: Home
+  not-found:
+    label: not found
 
-    planners:
-      label: Planners
-      submenu:
-        production:
-          label: Production planner
-        power:
-          label: Power planner
+pages:
+  home:
+    label: home
 
-    interactive-map:
-      label: Interactive Map
-      actions:
-        statistics:
-          label: Statistics
-        research:
-          label: Research
-        options:
-          label: Options
-        download:
-          label: Download
-        load:
-          label: Load Save Game
-          short-label: Load
-      controls:
-        static-elements:
-          details:
-            label: Map Layers
-          nodes:
-            label: Resource Nodes
-          wells:
-            label: Resource Wells
+  planners:
+    label: planners
+    submenu:
+      production:
+        label: production planner
+      power:
+        label: power planner
 
-    game-resources:
-      label: Game Resources
-      submenu:
-        buildings:
-          label: Buildings
-        architecture:
-          label: Architecture
-        structures:
-          label: Structures
-        items:
-          label: Items
-        tools:
-          label: Tools
-        vehicles:
-          label: Vehicles
-        fauna:
-          label: Fauna
-        statuses:
-          label: Statuses
-        ficsmas:
-          label: FICSMAS Holiday Event
+  interactive-map:
+    label: interactive map
 
-    game-progression:
-      label: Game Progression
-      submenu:
-        milestones:
-          label: Milestones
-        mam:
-          label: M.A.M.
-        awesome-shop:
-          label: AWESOME Shop
-        tetromino:
-          label: FICSIT Productive Packer Deluxe | World Leaderboard
+    actions:
+      statistics:
+        label: statistics
+        short-label: statistics
+      research:
+        label: research
+        short-label: research
+      options:
+        label: options
+        short-label: options
+      download:
+        label: download
+        short-label: download
+      load:
+        label: load save game
+        short-label: load
 
-    blueprints:
-      label: Blueprints
+    controls:
+      static-elements:
+        map:
+          in-game:
+            label: in-game map
+            set:
+              title: Switch to @:pages.interactive-map.controls.static-elements.map.in-game.label view.
+          realistic:
+            label: realistic map
+            set:
+              title: Switch to @:pages.interactive-map.controls.static-elements.map.realistic.label view.
 
-    workbench:
-      label: Workbench
-      submenu:
-        mods:
-          label: Mods
-        color:
-          label: Color converter
-        hard-drives:
-          label: Hard Drives
-        balancers:
-          label: Balancers
+        detail:
+          label: map layers
+          toggle:
+            layer:
+              title: Toggle @:{detail}.
+          buttons:
+            spawn:
+              label: spawn location | spawn locations
+            worldBorder:
+              label: world border
+            sporeFlowers:
+              label: spore flower | spore flowers
+            pillars:
+              label: gas pillar | gas pillars
+            smallRocks:
+              label: small rock | small rocks
+            largeRocks:
+              label: large rock | large rocks
+            caves:
+              label: cave | caves
+            roads:
+              label: road | roads
 
-dark-mode:
-  button:
-    toggle:
-      title: Toggle dark mode
+        node:
+          label: resource nodes
+          toggle:
+            layer:
+              title: Toggle @:{purity} @:{resource} @:{type}.
+            layers:
+              title: Toggle all @:{resource} @:{type}.
 
-change-language:
-  button:
-    change:
-      title: Change language
-    set:
-      title: Change language to {language}
+        well:
+          label: resource wells
+          toggle:
+            layer:
+              title: Toggle @:{purity} @:{resource} @:{type}.
+            layers:
+              title: Toggle all @:{resource} @:{type}.
+          toggle-geyser:
+            layer:
+              title: Toggle @:{purity} geysers.
+            layers:
+              title: Toggle all geysers.
 
-not-found: Not found
+  game-resources:
+    label: game resources
+    submenu:
+      buildings:
+        label: buildings
+      architecture:
+        label: architecture
+      structures:
+        label: structures
+      items:
+        label: items
+      tools:
+        label: tools
+      vehicles:
+        label: vehicles
+      fauna:
+        label: fauna
+      statuses:
+        label: statuses
+      ficsmas:
+        label: ficsmas holiday event
+
+  game-progression:
+    label: game progression
+    submenu:
+      milestones:
+        label: milestones
+      mam:
+        label: m.a.m.
+      awesome-shop:
+        label: awesome shop
+      tetromino:
+        label: ficsit productive packer deluxe {'|'} world leaderboard
+
+  blueprints:
+    label: blueprints
+
+  workbench:
+    label: workbench
+    submenu:
+      mods:
+        label: mods
+      color:
+        label: color converter
+      hard-drives:
+        label: hard drives
+      balancers:
+        label: balancers
+
+settings:
+  title: Settings
+  label: settings
+  setting:
+    dark-mode:
+      label: dark mode
+    change-language:
+      change:
+        title: Change language.
+      set:
+        title: Change language to {language}.
 
 resources:
-  ironOre:
-    name: Iron Ore
-  copperOre:
-    name: Copper Ore
-  limestone:
-    name: Limestone
-  coal:
-    name: Coal
-  cateriumOre:
-    name: Caterium Ore
-  rawQuartz:
-    name: Raw Quartz
-  sulfur:
-    name: Sulfur
-  uranium:
-    name: Uranium
-  bauxite:
-    name: Bauxite
-  crudeOil:
-    name: Crude Oil
-  samOre:
-    name: S.A.M. Ore
-  nitrogenGas:
-    name: Nitrogen Gas
-  water:
-    name: Water
-  geyser:
-    name: Geyser
+  resource:
+    ironOre:
+      name: iron ore
+    copperOre:
+      name: copper ore
+    limestone:
+      name: limestone
+    coal:
+      name: coal
+    cateriumOre:
+      name: caterium ore
+    rawQuartz:
+      name: raw quartz
+    sulfur:
+      name: sulfur
+    uranium:
+      name: uranium
+    bauxite:
+      name: bauxite
+    crudeOil:
+      name: crude oil
+    samOre:
+      name: s.a.m. ore
+    nitrogenGas:
+      name: nitrogen gas
+    water:
+      name: water
+    geyser:
+      name: geyser
 
-detail-layers:
-  spawn:
-    label: Spawn Locations
-  worldBorder:
-    label: World Border
-  sporeFlowers:
-    label: Spore Flowers
-  pillars:
-    label: Gas Pillars
-  smallRocks:
-    label: Small Rocks
-  largeRocks:
-    label: Large Rocks
-  caves:
-    label: Caves
-  roads:
-    label: Roads
+  types:
+    node:
+      name: resource node | resource nodes
+      short-name: node | nodes
+    well:
+      name: resource well | resource wells
+      short-name: well | wells
+
+  purities:
+    impure:
+      name: impure
+    normal:
+      name: normal
+    pure:
+      name: pure

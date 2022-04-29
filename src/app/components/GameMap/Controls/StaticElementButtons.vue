@@ -24,20 +24,13 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
       narrow-indicator
       left-icon="i-carbon-arrow-left"
       right-icon="i-carbon-arrow-right"
-      no-caps
     >
       <q-tab
         name="details"
-        :label="t('navigation.pages.interactive-map.controls.static-elements.details.label')"
+        :label="t('pages.interactive-map.controls.static-elements.detail.label')"
       />
-      <q-tab
-        name="nodes"
-        :label="t('navigation.pages.interactive-map.controls.static-elements.nodes.label')"
-      />
-      <q-tab
-        name="wells"
-        :label="t('navigation.pages.interactive-map.controls.static-elements.wells.label')"
-      />
+      <q-tab name="nodes" :label="t('pages.interactive-map.controls.static-elements.node.label')" />
+      <q-tab name="wells" :label="t('pages.interactive-map.controls.static-elements.well.label')" />
     </q-tabs>
 
     <q-separator />
@@ -49,6 +42,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
             class="option"
             :srcset="icons.map.gameLayer"
             :value="backgroundLayer === 'gameLayer'"
+            :title="t('pages.interactive-map.controls.static-elements.map.in-game.set.title')"
             @change="(value: boolean) => {
               if (value) {
                 mapDataStore.setMapVersion(mapDataStore.mapVersion, 'gameLayer')
@@ -59,6 +53,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
             class="option"
             :srcset="icons.map.realisticLayer"
             :value="backgroundLayer === 'realisticLayer'"
+            :title="t('pages.interactive-map.controls.static-elements.map.realistic.set.title')"
             @change="(value: boolean) => {
               if (value) {
                 mapDataStore.setMapVersion(mapDataStore.mapVersion, 'realisticLayer')
@@ -71,58 +66,47 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
             v-for="[detail, detailLayer] in Object.entries(detailLayers)"
             :key="detail"
             class="detail"
-            no-caps
             :value="detailLayer.value.show"
+            :title="
+              t(
+                'pages.interactive-map.controls.static-elements.detail.toggle.layer.title',
+                {
+                  detail: `pages.interactive-map.controls.static-elements.detail.buttons.${detail}.label`,
+                },
+                /* TODO: count */ 2
+              )
+            "
             @change="mapDataStore.toggleDetailLayer(detail)"
-            >{{ t(`detail-layers.${detail}.label`) }}</ToggleButton
+            >{{
+              t(
+                `pages.interactive-map.controls.static-elements.detail.buttons.${detail}.label`,
+                /* TODO: count */ 2
+              )
+            }}</ToggleButton
           >
         </div>
       </q-tab-panel>
 
       <q-tab-panel name="nodes" class="node-layers">
-        <div
-          v-for="[resource, resourceNodeLayer] in Object.entries(resourceNodeLayers)"
+        <ResourceButtons
+          v-for="[resource, resourceLayerData] in Object.entries(resourceNodeLayers)"
           :key="resource"
+          :resource="resource"
+          type="node"
+          :resourceLayerData="resourceLayerData.value"
           class="resource"
-        >
-          <div class="label">
-            <span>{{ t(`resources.${resource}.name`) }}</span>
-          </div>
-          <div
-            v-for="[purity, { show, iconSrcset }] in Object.entries(resourceNodeLayer.value)"
-            :key="purity"
-          >
-            <ImageToggleButton
-              :class="purity"
-              :srcset="iconSrcset"
-              :value="show"
-              @change="mapDataStore.toggleResourceNodeLayer(resource, purity)"
-            />
-          </div>
-        </div>
+        />
       </q-tab-panel>
 
       <q-tab-panel name="wells" class="well-layers">
-        <div
-          v-for="[resource, resourceWellLayer] in Object.entries(resourceWellLayers)"
+        <ResourceButtons
+          v-for="[resource, resourceLayerData] in Object.entries(resourceWellLayers)"
           :key="resource"
+          :resource="resource"
+          type="well"
+          :resourceLayerData="resourceLayerData.value"
           class="resource"
-        >
-          <div class="label">
-            <span>{{ t(`resources.${resource}.name`) }}</span>
-          </div>
-          <div
-            v-for="[purity, { show, iconSrcset }] in Object.entries(resourceWellLayer.value)"
-            :key="purity"
-          >
-            <ImageToggleButton
-              :class="purity"
-              :srcset="iconSrcset"
-              :value="show"
-              @change="mapDataStore.toggleResourceWellLayer(resource, purity)"
-            />
-          </div>
-        </div>
+        />
       </q-tab-panel>
     </q-tab-panels>
   </q-card-section>
@@ -165,7 +149,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
     grid-template-columns: 1fr 1fr;
     gap: 0.25rem;
 
-    > .q-btn--push {
+    .detail {
       padding: 0.5rem 0.25rem;
     }
   }
@@ -177,45 +161,5 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
   grid-template-columns: 1fr repeat(3, min-content);
   gap: 0.25rem;
   align-items: center;
-
-  $button-size: 3.25rem;
-
-  .resource {
-    display: contents;
-
-    .label {
-      height: $button-size;
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .image-toggle-button {
-    aspect-ratio: 1;
-    width: $button-size;
-    background-color: var(--purity-dull-color);
-
-    &.q-btn--active {
-      background-color: var(--purity-color);
-    }
-
-    &::before {
-      border: solid 0.15rem var(--purity-color, $primary);
-    }
-
-    :deep(.q-btn__content) {
-      margin: 0.125rem;
-      border-radius: 50%;
-    }
-
-    :deep(.q-img__container) {
-      margin: 0.125rem;
-    }
-
-    :deep(.q-img__image) {
-      filter: drop-shadow(0 0 0.2rem white) drop-shadow(0 0 0.2rem white);
-      border-radius: 0;
-    }
-  }
 }
 </style>

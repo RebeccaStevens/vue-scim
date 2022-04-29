@@ -11,7 +11,6 @@ export type Props = {
   value?: ToggleButtonProps["value"];
   dense?: ToggleButtonProps["dense"];
   label?: ToggleButtonProps["label"];
-  noCaps?: ToggleButtonProps["noCaps"];
   title?: ToggleButtonProps["title"];
   ratio?: QImgProps["ratio"];
   fit?: QImgProps["fit"];
@@ -39,7 +38,6 @@ const onChange = () => {
     :value="value"
     :dense="dense"
     :label="label"
-    :noCaps="noCaps"
     :title="title"
     class="image-toggle-button"
     @change="onChange"

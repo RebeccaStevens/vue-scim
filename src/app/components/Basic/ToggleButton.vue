@@ -5,7 +5,6 @@ export type Props = {
   value?: boolean;
   dense?: QBtnProps["dense"];
   label?: QBtnProps["label"];
-  noCaps?: QBtnProps["noCaps"];
   title?: string;
 };
 
@@ -34,7 +33,6 @@ const onMouseDown = (event: MouseEvent) => {
     :title="title"
     :label="label"
     :dense="dense"
-    :no-caps="noCaps"
     :class="{ 'toggle-button': true, 'q-btn--active': value }"
     @click="onClick"
     @mousedown="onMouseDown"

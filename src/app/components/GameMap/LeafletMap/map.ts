@@ -6,7 +6,7 @@ import type { WatchStopHandle } from "vue";
 import "leaflet/dist/leaflet.css";
 
 import * as assert from "~/assert";
-import type { ResourceData } from "~/stores/map-data";
+import type { ResourceLayerData } from "~/stores/map-data";
 import { backgroundLayers, useMapDataStore } from "~/stores/map-data";
 import { transpose, getResourcePurityId } from "~/utils";
 
@@ -262,7 +262,7 @@ function setupDetailLayerToggles(layersDataMap: LayersDataMap, map: L.Map) {
   };
 
   function mapResourcesToRefs(
-    resourceLayers: Readonly<Record<string, ResourceData>>,
+    resourceLayers: Readonly<Record<string, ResourceLayerData>>,
     type: string
   ) {
     return Object.entries(resourceLayers).flatMap(([resource, purities]) =>

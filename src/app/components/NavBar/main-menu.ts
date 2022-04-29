@@ -22,23 +22,23 @@ export function useMainMenu() {
   const menu: MainMenuData = [
     {
       type: "link",
-      label: t("navigation.pages.home.label"),
+      label: t("pages.home.label"),
 
       link: "/",
     },
     {
       type: "submenu",
-      label: t("navigation.pages.planners.label"),
+      label: t("pages.planners.label"),
       submenu: [
         {
           type: "link",
-          label: t("navigation.pages.planners.submenu.production.label"),
+          label: t("pages.planners.submenu.production.label"),
 
           link: "/planners/production",
         },
         {
           type: "link",
-          label: t("navigation.pages.planners.submenu.power.label"),
+          label: t("pages.planners.submenu.power.label"),
 
           link: "/planners/power",
         },
@@ -46,53 +46,51 @@ export function useMainMenu() {
     },
     {
       type: "link",
-      label: t("navigation.pages.interactive-map.label"),
+      label: t("pages.interactive-map.label"),
       link: "/interactive-map",
     },
     {
       type: "submenu",
-      label: t("navigation.pages.game-resources.label"),
+      label: t("pages.game-resources.label"),
       submenu: [
         {
           type: "link",
-          label: t("navigation.pages.game-resources.submenu.buildings.label"),
+          label: t("pages.game-resources.submenu.buildings.label"),
           link: "/buildings",
         },
         {
           type: "link",
-          label: t(
-            "navigation.pages.game-resources.submenu.architecture.label"
-          ),
+          label: t("pages.game-resources.submenu.architecture.label"),
           link: "/architecture",
         },
         {
           type: "link",
-          label: t("navigation.pages.game-resources.submenu.structures.label"),
+          label: t("pages.game-resources.submenu.structures.label"),
           link: "/structures",
         },
         {
           type: "link",
-          label: t("navigation.pages.game-resources.submenu.items.label"),
+          label: t("pages.game-resources.submenu.items.label"),
           link: "/items",
         },
         {
           type: "link",
-          label: t("navigation.pages.game-resources.submenu.tools.label"),
+          label: t("pages.game-resources.submenu.tools.label"),
           link: "/tools",
         },
         {
           type: "link",
-          label: t("navigation.pages.game-resources.submenu.vehicles.label"),
+          label: t("pages.game-resources.submenu.vehicles.label"),
           link: "/vehicles",
         },
         {
           type: "link",
-          label: t("navigation.pages.game-resources.submenu.fauna.label"),
+          label: t("pages.game-resources.submenu.fauna.label"),
           link: "/fauna",
         },
         {
           type: "link",
-          label: t("navigation.pages.game-resources.submenu.statuses.label"),
+          label: t("pages.game-resources.submenu.statuses.label"),
           link: "/statuses",
         },
         {
@@ -100,68 +98,64 @@ export function useMainMenu() {
         },
         {
           type: "link",
-          label: t("navigation.pages.game-resources.submenu.ficsmas.label"),
+          label: t("pages.game-resources.submenu.ficsmas.label"),
           link: "/ficsmas",
         },
       ],
     },
     {
       type: "submenu",
-      label: t("navigation.pages.game-progression.label"),
+      label: t("pages.game-progression.label"),
       submenu: [
         {
           type: "link",
-          label: t(
-            "navigation.pages.game-progression.submenu.milestones.label"
-          ),
+          label: t("pages.game-progression.submenu.milestones.label"),
           link: "/milestones",
         },
         {
           type: "link",
-          label: t("navigation.pages.game-progression.submenu.mam.label"),
+          label: t("pages.game-progression.submenu.mam.label"),
           link: "/mam",
         },
         {
           type: "link",
-          label: t(
-            "navigation.pages.game-progression.submenu.awesome-shop.label"
-          ),
+          label: t("pages.game-progression.submenu.awesome-shop.label"),
           link: "/awesome-shop",
         },
         {
           type: "link",
-          label: t("navigation.pages.game-progression.submenu.tetromino.label"),
+          label: t("pages.game-progression.submenu.tetromino.label"),
           link: "/tetromino-leader-board",
         },
       ],
     },
     {
       type: "link",
-      label: t("navigation.pages.blueprints.label"),
+      label: t("pages.blueprints.label"),
       link: "/blueprints",
     },
     {
       type: "submenu",
-      label: t("navigation.pages.workbench.label"),
+      label: t("pages.workbench.label"),
       submenu: [
         {
           type: "link",
-          label: t("navigation.pages.workbench.submenu.mods.label"),
+          label: t("pages.workbench.submenu.mods.label"),
           link: "/mods",
         },
         {
           type: "link",
-          label: t("navigation.pages.workbench.submenu.color.label"),
+          label: t("pages.workbench.submenu.color.label"),
           link: "/workbench/color",
         },
         {
           type: "link",
-          label: t("navigation.pages.workbench.submenu.hard-drives.label"),
+          label: t("pages.workbench.submenu.hard-drives.label"),
           link: "/hard-drives",
         },
         {
           type: "link",
-          label: t("navigation.pages.workbench.submenu.balancers.label"),
+          label: t("pages.workbench.submenu.balancers.label"),
           link: "/balancers",
         },
       ],

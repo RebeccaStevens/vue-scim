@@ -11,3 +11,9 @@
 .q-btn-icon.q-btn-dropdown--simple * + .q-btn-dropdown__arrow {
   margin-left: 0.125rem;
 }
+
+.q-btn,
+.q-tab,
+.q-toggle {
+  text-transform: capitalize;
+}

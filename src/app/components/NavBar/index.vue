@@ -50,6 +50,7 @@ const menu = useMainMenu();
         flat
         class="menu-item q-btn-icon"
         :icon="currentLanguageMeta.icon"
+        :title="t('settings.setting.change-language.change.title')"
         dropdown-icon="i-ic-baseline-arrow-drop-down"
       >
         <q-list>
@@ -58,6 +59,11 @@ const menu = useMainMenu();
             :key="language.locale"
             clickable
             v-close-popup
+            :title="
+              t('settings.setting.change-language.set.title', {
+                language: t('language', '', { locale: language.locale }),
+              })
+            "
             @click="setLanguage(language.locale)"
           >
             <q-item-section avatar>
@@ -73,10 +79,11 @@ const menu = useMainMenu();
         class="menu-item q-btn-icon"
         dropdown-icon="i-ic-baseline-arrow-drop-down"
         icon="i-carbon-user-avatar-filled"
+        :title="t('settings.title')"
       >
         <div class="row no-wrap q-pa-md">
           <div class="column">
-            <div class="text-h6 q-mb-md">Settings</div>
+            <div class="text-h6 q-mb-md capitalize">{{ t("settings.label") }}</div>
             <q-toggle
               size="xl"
               class="dark-mode-switch"
@@ -85,7 +92,7 @@ const menu = useMainMenu();
               checked-icon="i-emojione-crescent-moon"
               color="primary"
               keep-color
-              :label="t('Dark Mode')"
+              :label="t('settings.setting.dark-mode.label')"
             ></q-toggle>
           </div>
 
@@ -109,5 +116,8 @@ const menu = useMainMenu();
 <style scoped>
 .menu-item.q-btn-icon {
   margin: 0 0.125rem;
+}
+.q-item {
+  text-transform: capitalize;
 }
 </style>

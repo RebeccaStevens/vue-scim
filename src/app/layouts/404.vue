@@ -13,7 +13,11 @@ const { t } = useI18n();
       <div mt-12 text-4xl>
         <div i-carbon-warning inline-block />
       </div>
-      <router-view />
+
+      <div class="capitalize">
+        {{ t("navigation.not-found.label") }}
+      </div>
+
       <div>
         <q-btn m="3 t8" @click="router.back()">{{ t("navigation.back.label") }}</q-btn>
       </div>

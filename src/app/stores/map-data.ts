@@ -2,6 +2,16 @@ import { acceptHMRUpdate, defineStore } from "pinia";
 
 import * as assert from "~/assert";
 
+export type PurityName = typeof purities[number];
+
+export type ResourceType = "node" | "well";
+
+export type ResourceNodeName = typeof resourceNodes[number];
+
+export type ResourceWellName = typeof resourceWells[number];
+
+export type ResourceName = ResourceNodeName | ResourceWellName;
+
 export const backgroundLayers = {
   EarlyAccess: ["gameLayer", "realisticLayer"],
 } as const;
@@ -54,12 +64,12 @@ export const useMapDataStore = defineStore("map-data", {
     ) as Record<typeof details[number], ButtonData>;
 
     const resourceNodeLayers = Object.fromEntries(
-      resourceNodes.map((name) => [name, createResourceData()])
-    ) as Record<typeof resourceNodes[number], ResourceData>;
+      resourceNodes.map((name) => [name, createResourceLayerData()])
+    ) as Record<ResourceNodeName, ResourceLayerData>;
 
     const resourceWellLayers = Object.fromEntries(
-      resourceWells.map((name) => [name, createResourceData()])
-    ) as Record<typeof resourceWells[number], ResourceData>;
+      resourceWells.map((name) => [name, createResourceLayerData()])
+    ) as Record<ResourceWellName, ResourceLayerData>;
 
     return {
       mapVersion,
@@ -79,24 +89,91 @@ export const useMapDataStore = defineStore("map-data", {
       this.backgroundLayer = layer;
     },
 
+    setDetailLayer(type: typeof details[number], value: boolean) {
+      this.detailLayers[type].show = value;
+    },
+
+    setResourceLayer(
+      type: ResourceType,
+      resource: ResourceName,
+      purity: keyof ResourceLayerData,
+      value: boolean
+    ) {
+      if (type === "node") {
+        assert.ok(
+          isResourceNodeName(resource),
+          `"${resource}" is not a valid resource node name.`
+        );
+        this.setResourceNodeLayer(resource, purity, value);
+      } else {
+        assert.ok(
+          isResourceWellName(resource),
+          `"${resource}" is not a valid resource well name.`
+        );
+        this.setResourceWellLayer(resource, purity, value);
+      }
+    },
+
+    setResourceNodeLayer(
+      resource: ResourceNodeName,
+      purity: keyof ResourceLayerData,
+      value: boolean
+    ) {
+      this.resourceNodeLayers[resource][purity].show = value;
+    },
+
+    setResourceWellLayer(
+      resource: ResourceWellName,
+      purity: keyof ResourceLayerData,
+      value: boolean
+    ) {
+      this.resourceWellLayers[resource][purity].show = value;
+    },
+
     toggleDetailLayer(type: typeof details[number]) {
-      this.detailLayers[type].show = !this.detailLayers[type].show;
+      this.setDetailLayer(type, !this.detailLayers[type].show);
+    },
+
+    toggleResourceLayer(
+      type: ResourceType,
+      resource: ResourceName,
+      purity: keyof ResourceLayerData
+    ) {
+      if (type === "node") {
+        assert.ok(
+          isResourceNodeName(resource),
+          `"${resource}" is not a valid resource node name.`
+        );
+        this.toggleResourceNodeLayer(resource, purity);
+      } else {
+        assert.ok(
+          isResourceWellName(resource),
+          `"${resource}" is not a valid resource well name.`
+        );
+        this.toggleResourceWellLayer(resource, purity);
+      }
     },
 
     toggleResourceNodeLayer(
-      resource: typeof resourceNodes[number],
-      purity: keyof ResourceData
+      resource: ResourceNodeName,
+      purity: keyof ResourceLayerData
     ) {
-      this.resourceNodeLayers[resource][purity].show =
-        !this.resourceNodeLayers[resource][purity].show;
+      this.setResourceNodeLayer(
+        resource,
+        purity,
+        !this.resourceNodeLayers[resource][purity].show
+      );
     },
 
     toggleResourceWellLayer(
-      resource: typeof resourceWells[number],
-      purity: keyof ResourceData
+      resource: ResourceWellName,
+      purity: keyof ResourceLayerData
     ) {
-      this.resourceWellLayers[resource][purity].show =
-        !this.resourceWellLayers[resource][purity].show;
+      this.setResourceWellLayer(
+        resource,
+        purity,
+        !this.resourceWellLayers[resource][purity].show
+      );
     },
 
     registerResourceNodeLayerIcon(
@@ -105,7 +182,7 @@ export const useMapDataStore = defineStore("map-data", {
       srcset: string
     ) {
       assert.ok(
-        isResourceNodesName(resource),
+        isResourceNodeName(resource),
         `"${resource}" is not a valid resource node name.`
       );
       assert.ok(
@@ -121,7 +198,7 @@ export const useMapDataStore = defineStore("map-data", {
       srcset: string
     ) {
       assert.ok(
-        isResourceWellsName(resource),
+        isResourceWellName(resource),
         `"${resource}" is not a valid resource well name.`
       );
       assert.ok(
@@ -137,9 +214,9 @@ if (typeof import.meta.hot === "object") {
   import.meta.hot.accept(acceptHMRUpdate(useMapDataStore, import.meta.hot));
 }
 
-export type ResourceData = Record<typeof purities[number], ButtonData>;
+export type ResourceLayerData = Record<PurityName, ButtonData>;
 
-function createResourceData(): ResourceData {
+function createResourceLayerData(): ResourceLayerData {
   return {
     impure: {
       show: false,
@@ -164,18 +241,14 @@ function createButtonData(): ButtonData {
   };
 }
 
-function isResourceNodesName(
-  name: string
-): name is typeof resourceNodes[number] {
+function isResourceNodeName(name: string): name is ResourceNodeName {
   return resourceNodes.includes(name);
 }
 
-function isResourceWellsName(
-  name: string
-): name is typeof resourceWells[number] {
+function isResourceWellName(name: string): name is ResourceWellName {
   return resourceWells.includes(name);
 }
 
-function isPurityName(purity: string): purity is typeof purities[number] {
+function isPurityName(purity: string): purity is PurityName {
   return purities.includes(purity);
 }

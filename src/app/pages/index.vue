@@ -3,7 +3,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <p>{{ t("navigation.pages.home.label") }}</p>
+  <p>{{ t("pages.home.label") }}</p>
 </template>
 
 <route lang="yaml">

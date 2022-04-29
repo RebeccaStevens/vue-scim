@@ -31,47 +31,47 @@ const onSaveGameChosen = () => {
     <q-btn
       flat
       stack
-      size="sm"
+      size="0.85em"
       v-show="hasGameSave"
       icon="i-carbon-analytics"
-      :label="t('navigation.pages.interactive-map.actions.statistics.label')"
+      :label="t('pages.interactive-map.actions.statistics.short-label')"
     ></q-btn>
     <q-btn
       flat
       stack
-      size="sm"
+      size="0.85em"
       v-show="hasGameSave"
       icon="i-clarity-flask-solid"
-      :label="t('navigation.pages.interactive-map.actions.research.label')"
+      :label="t('pages.interactive-map.actions.research.short-label')"
     ></q-btn>
     <q-btn
       flat
       stack
-      size="sm"
+      size="0.85em"
       v-show="hasGameSave"
       icon="i-fa6-solid-gears"
-      :label="t('navigation.pages.interactive-map.actions.options.label')"
+      :label="t('pages.interactive-map.actions.options.short-label')"
     ></q-btn>
     <q-btn
       flat
       stack
-      size="sm"
+      size="0.85em"
       v-show="hasGameSave"
       @click="onButtonDownload"
       icon="i-carbon-download"
-      :label="t('navigation.pages.interactive-map.actions.download.label')"
+      :label="t('pages.interactive-map.actions.download.short-label')"
     ></q-btn>
     <q-btn
       :flat="hasGameSave"
       :stack="hasGameSave"
-      :size="hasGameSave ? 'sm' : '1.125rem'"
+      :size="hasGameSave ? '0.85em' : '1.125rem'"
       class="load-btn"
       @click="onButtonLoad"
       icon="i-carbon-upload"
       :label="
         hasGameSave
-          ? t('navigation.pages.interactive-map.actions.load.short-label')
-          : t('navigation.pages.interactive-map.actions.load.label')
+          ? t('pages.interactive-map.actions.load.short-label')
+          : t('pages.interactive-map.actions.load.label')
       "
     ></q-btn>
     <input
