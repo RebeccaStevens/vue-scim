@@ -37,27 +37,29 @@ const count = 10;
 </script>
 
 <template>
-  <q-btn
-    class="label"
-    flat
-    align="left"
-    :label="t(`resources.resource.${resource}.name`)"
-    :title="
-      resource === 'geyser'
-        ? t(`pages.interactive-map.controls.static-elements.${type}.toggle-geyser.layers.title`)
-        : t(
-            `pages.interactive-map.controls.static-elements.${type}.toggle.layers.title`,
-            {
-              resource: `resources.resource.${resource}.name`,
-              type: `resources.types.${type}.short-name`,
-            },
-            count
-          )
-    "
-    @click="toggleResourceGroup(resource)"
-  />
-  <div v-for="[purity, { show, iconSrcset }] in Object.entries(resourceLayerData)" :key="purity">
+  <div class="resource-button">
+    <q-btn
+      class="label"
+      flat
+      align="left"
+      :label="t(`resources.resource.${resource}.name`)"
+      :title="
+        resource === 'geyser'
+          ? t(`pages.interactive-map.controls.static-elements.${type}.toggle-geyser.layers.title`)
+          : t(
+              `pages.interactive-map.controls.static-elements.${type}.toggle.layers.title`,
+              {
+                resource: `resources.resource.${resource}.name`,
+                type: `resources.types.${type}.short-name`,
+              },
+              count
+            )
+      "
+      @click="toggleResourceGroup(resource)"
+    />
     <ImageToggleButton
+      v-for="[purity, { show, iconSrcset }] in Object.entries(resourceLayerData)"
+      :key="purity"
       :class="purity"
       :srcset="iconSrcset"
       :value="show"
@@ -82,16 +84,20 @@ const count = 10;
 </template>
 
 <style scoped lang="scss">
-$button-size: 3.25rem;
+.resource-button {
+  display: grid;
+  grid-template-columns: 1fr repeat(3, min-content);
+  gap: 0.25rem;
+  align-items: center;
+}
 
-.label {
-  height: $button-size;
+.label,
+.image-toggle-button {
+  height: 3.25rem;
 }
 
 .image-toggle-button {
   aspect-ratio: 1;
-  width: $button-size;
-  height: $button-size;
   background-color: var(--purity-dull-color);
 
   &.q-btn--active {

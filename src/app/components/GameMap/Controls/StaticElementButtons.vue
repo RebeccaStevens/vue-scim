@@ -94,7 +94,6 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
           :resource="resource"
           type="node"
           :resourceLayerData="resourceLayerData.value"
-          class="resource"
         />
       </q-tab-panel>
 
@@ -105,7 +104,6 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
           :resource="resource"
           type="well"
           :resourceLayerData="resourceLayerData.value"
-          class="resource"
         />
       </q-tab-panel>
     </q-tab-panels>
@@ -153,13 +151,5 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
       padding: 0.5rem 0.25rem;
     }
   }
-}
-
-.node-layers,
-.well-layers {
-  display: grid;
-  grid-template-columns: 1fr repeat(3, min-content);
-  gap: 0.25rem;
-  align-items: center;
 }
 </style>
