@@ -56,13 +56,13 @@ class PolygonLine extends L.Polyline {
   };
 
   private getUpdatedStyle(): PathOptions {
-    const position = [
+    const [origin, far] = [
       mapUtils.unproject(this._map, [0, 0]),
       mapUtils.unproject(this._map, [10_000, 0]),
     ];
     const meterWeight =
-      this._map.latLngToContainerPoint(position[1]).x -
-      this._map.latLngToContainerPoint(position[0]).x;
+      this._map.latLngToContainerPoint(far).x -
+      this._map.latLngToContainerPoint(origin).x;
 
     const weight = Math.min(
       Math.max(this.minWeight, (meterWeight * this.weight) / 10_000),
