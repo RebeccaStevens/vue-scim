@@ -1,22 +1,21 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
+
 import * as icons from "~/raw/img/icons";
 import { useMapDataStore } from "~/stores/map-data";
 
 const { t } = useI18n();
-const tab = ref("details");
+const activeTab = ref("details");
 
 const mapDataStore = useMapDataStore();
-
-const backgroundLayer = toRef(mapDataStore, "backgroundLayer");
-const detailLayers = toRefs(mapDataStore.detailLayers);
-const resourceNodeLayers = toRefs(mapDataStore.resourceNodeLayers);
-const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
+const mapData = storeToRefs(mapDataStore);
 </script>
 
 <template>
   <q-card-section>
     <q-tabs
-      v-model="tab"
+      v-model="activeTab"
+      align="justify"
       dense
       class="text-grey"
       active-color="primary"
@@ -35,13 +34,13 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
 
     <q-separator />
 
-    <q-tab-panels v-model="tab" animated>
+    <q-tab-panels v-model="activeTab" animated>
       <q-tab-panel name="details" class="details-layers">
         <div class="background-layer-options">
           <ImageToggleButton
             class="option"
             :srcset="icons.map.gameLayer"
-            :value="backgroundLayer === 'gameLayer'"
+            :value="mapData.backgroundLayer.value === 'gameLayer'"
             :title="t('pages.interactive-map.controls.static-elements.map.in-game.set.title')"
             @change="(value: boolean) => {
               if (value) {
@@ -52,7 +51,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
           <ImageToggleButton
             class="option"
             :srcset="icons.map.realisticLayer"
-            :value="backgroundLayer === 'realisticLayer'"
+            :value="mapData.backgroundLayer.value === 'realisticLayer'"
             :title="t('pages.interactive-map.controls.static-elements.map.realistic.set.title')"
             @change="(value: boolean) => {
               if (value) {
@@ -63,24 +62,25 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
         </div>
         <div class="layer-buttons">
           <ToggleButton
-            v-for="[detail, detailLayer] in Object.entries(detailLayers)"
-            :key="detail"
+            v-for="detailLayer in Object.values(mapData.detailLayers.value)"
+            :key="detailLayer.id"
             class="detail"
-            :value="detailLayer.value.show"
+            :value="detailLayer.show"
+            :count="detailLayer.markerCount"
             :title="
               t(
                 'pages.interactive-map.controls.static-elements.detail.toggle.layer.title',
                 {
-                  detail: `pages.interactive-map.controls.static-elements.detail.buttons.${detail}.label`,
+                  detail: `pages.interactive-map.controls.static-elements.detail.buttons.${detailLayer.name}.label`,
                 },
-                /* TODO: count */ 2
+                detailLayer.markerCount ?? 1
               )
             "
-            @change="mapDataStore.toggleDetailLayer(detail)"
+            @change="mapDataStore.toggleLayerVisibility(detailLayer.id)"
             >{{
               t(
-                `pages.interactive-map.controls.static-elements.detail.buttons.${detail}.label`,
-                /* TODO: count */ 2
+                `pages.interactive-map.controls.static-elements.detail.buttons.${detailLayer.name}.label`,
+                detailLayer.markerCount ?? 1
               )
             }}</ToggleButton
           >
@@ -89,21 +89,21 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
 
       <q-tab-panel name="nodes" class="node-layers">
         <ResourceButtons
-          v-for="[resource, resourceLayerData] in Object.entries(resourceNodeLayers)"
+          v-for="[resource, resourceLayerData] in Object.entries(mapData.resourceNodeLayers.value)"
           :key="resource"
           :resource="resource"
           type="node"
-          :resourceLayerData="resourceLayerData.value"
+          :resourceLayerData="resourceLayerData"
         />
       </q-tab-panel>
 
       <q-tab-panel name="wells" class="well-layers">
         <ResourceButtons
-          v-for="[resource, resourceLayerData] in Object.entries(resourceWellLayers)"
+          v-for="[resource, resourceLayerData] in Object.entries(mapData.resourceWellLayers.value)"
           :key="resource"
           :resource="resource"
           type="well"
-          :resourceLayerData="resourceLayerData.value"
+          :resourceLayerData="resourceLayerData"
         />
       </q-tab-panel>
     </q-tab-panels>
@@ -111,19 +111,19 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
 </template>
 
 <style scoped lang="scss">
-.q-tabs {
-  align-items: center;
+.q-tab {
+  flex: 1 1 auto;
+  padding: 0;
+}
 
-  .q-tab {
-    padding: 0;
-  }
+.q-tab-panels {
+  margin-top: 1rem;
 }
 
 .q-tab-panel {
   padding: 0;
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
 }
 
 .background-layer-options {
@@ -149,6 +149,7 @@ const resourceWellLayers = toRefs(mapDataStore.resourceWellLayers);
 
     .detail {
       padding: 0.5rem 0.25rem;
+      --badge-width: 4ch;
     }
   }
 }

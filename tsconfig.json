@@ -31,6 +31,9 @@
       "~/icons": [
         "app/raw/img/icons/index.ts"
       ],
+      "~/types": [
+        "types/index.ts"
+      ],
       "~/workers/*": [
         "workers/*"
       ],

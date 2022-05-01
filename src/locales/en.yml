@@ -55,7 +55,7 @@ pages:
           label: map layers
           toggle:
             layer:
-              title: Toggle @:{detail}.
+              title: Toggle @:{detail}. | Toggle {count} @:{detail}.
           buttons:
             spawn:
               label: spawn location | spawn locations
@@ -78,22 +78,22 @@ pages:
           label: resource nodes
           toggle:
             layer:
-              title: Toggle @:{purity} @:{resource} @:{type}.
+              title: Toggle @:{purity} @:{resource} @:{type}. | Toggle {count} @:{purity} @:{resource} @:{type}.
             layers:
-              title: Toggle all @:{resource} @:{type}.
+              title: Toggle all @:{resource} @:{type}. | Toggle all {count} @:{resource} @:{type}.
 
         well:
           label: resource wells
           toggle:
             layer:
-              title: Toggle @:{purity} @:{resource} @:{type}.
+              title: Toggle @:{purity} @:{resource} @:{type}. | Toggle {count} @:{purity} @:{resource} @:{type}.
             layers:
-              title: Toggle all @:{resource} @:{type}.
+              title: Toggle all @:{resource} @:{type}. | Toggle all {count} @:{resource} @:{type}.
           toggle-geyser:
             layer:
-              title: Toggle @:{purity} geysers.
+              title: Toggle @:{purity} geysers. | Toggle {count} @:{purity} geysers.
             layers:
-              title: Toggle all geysers.
+              title: Toggle all geysers. | Toggle all {count} geysers.
 
   game-resources:
     label: game resources

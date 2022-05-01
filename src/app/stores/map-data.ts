@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 
-import * as assert from "~/assert";
+import type { Tuple } from "~/types";
+import { getOrCreateMapElement, getPOIsId } from "~/utils";
 
 export type PurityName = typeof purities[number];
 
@@ -11,6 +12,8 @@ export type ResourceNodeName = typeof resourceNodes[number];
 export type ResourceWellName = typeof resourceWells[number];
 
 export type ResourceName = ResourceNodeName | ResourceWellName;
+
+export type DetailName = typeof details[number];
 
 export const backgroundLayers = {
   EarlyAccess: ["gameLayer", "realisticLayer"],
@@ -50,33 +53,66 @@ export const details = [
   "roads",
 ] as const;
 
+export const enum LayerButtonGroup {
+  Details = "details",
+  ResourceNodes = "nodes",
+  ResourceWells = "wells",
+  Collectibles = "collectibles",
+}
+
 export const useMapDataStore = defineStore("map-data", {
   state: () => {
-    const mapVersion = Object.keys(
-      backgroundLayers
-    )[0] as keyof typeof backgroundLayers;
+    const mapVersion: keyof typeof backgroundLayers =
+      Object.keys(backgroundLayers)[0]!;
 
     const backgroundLayer = backgroundLayers
       .EarlyAccess[0] as typeof backgroundLayers.EarlyAccess[number];
 
-    const detailLayers = Object.fromEntries(
-      details.map((name) => [name, createButtonData()])
-    ) as Record<typeof details[number], ButtonData>;
+    const detailIds = details.map(
+      (name): [string, DetailName, LayerButtonGroup] => [
+        getPOIsId(LayerButtonGroup.Details, name),
+        name,
+        LayerButtonGroup.Details,
+      ]
+    );
+    const resourceNodeIds = resourceNodes.flatMap((resource) =>
+      purities.map(
+        (purity): [string, ResourceNodeName, PurityName, LayerButtonGroup] => [
+          getPOIsId(LayerButtonGroup.ResourceNodes, resource, purity),
+          resource,
+          purity,
+          LayerButtonGroup.ResourceNodes,
+        ]
+      )
+    );
+    const resourceWellIds = resourceWells.flatMap((resource) =>
+      purities.map(
+        (purity): [string, ResourceWellName, PurityName, LayerButtonGroup] => [
+          getPOIsId(LayerButtonGroup.ResourceWells, resource, purity),
+          resource,
+          purity,
+          LayerButtonGroup.ResourceWells,
+        ]
+      )
+    );
 
-    const resourceNodeLayers = Object.fromEntries(
-      resourceNodes.map((name) => [name, createResourceLayerData()])
-    ) as Record<ResourceNodeName, ResourceLayerData>;
-
-    const resourceWellLayers = Object.fromEntries(
-      resourceWells.map((name) => [name, createResourceLayerData()])
-    ) as Record<ResourceWellName, ResourceLayerData>;
+    const layerButtonData = Object.fromEntries([
+      ...detailIds.map(([id, name, group]): [string, LayerButtonData] => [
+        id,
+        createDetailLayerButtonData(id, group, name),
+      ]),
+      ...[...resourceNodeIds, ...resourceWellIds].map(
+        ([id, resource, purity, group]): [string, LayerButtonData] => [
+          id,
+          createResourceLayerButtonData(id, group, resource, purity),
+        ]
+      ),
+    ]);
 
     return {
       mapVersion,
       backgroundLayer,
-      detailLayers,
-      resourceNodeLayers,
-      resourceWellLayers,
+      layerButtonData,
     };
   },
 
@@ -89,123 +125,79 @@ export const useMapDataStore = defineStore("map-data", {
       this.backgroundLayer = layer;
     },
 
-    setDetailLayer(type: typeof details[number], value: boolean) {
-      this.detailLayers[type].show = value;
-    },
-
-    setResourceLayer(
-      type: ResourceType,
-      resource: ResourceName,
-      purity: keyof ResourceLayerData,
-      value: boolean
-    ) {
-      if (type === "node") {
-        assert.ok(
-          isResourceNodeName(resource),
-          `"${resource}" is not a valid resource node name.`
-        );
-        this.setResourceNodeLayer(resource, purity, value);
-      } else {
-        assert.ok(
-          isResourceWellName(resource),
-          `"${resource}" is not a valid resource well name.`
-        );
-        this.setResourceWellLayer(resource, purity, value);
+    setLayerVisibility(id: string, value: boolean) {
+      const data = this.layerButtonData[id];
+      if (data !== undefined) {
+        data.show = value;
       }
     },
 
-    setResourceNodeLayer(
-      resource: ResourceNodeName,
-      purity: keyof ResourceLayerData,
-      value: boolean
-    ) {
-      this.resourceNodeLayers[resource][purity].show = value;
-    },
-
-    setResourceWellLayer(
-      resource: ResourceWellName,
-      purity: keyof ResourceLayerData,
-      value: boolean
-    ) {
-      this.resourceWellLayers[resource][purity].show = value;
-    },
-
-    toggleDetailLayer(type: typeof details[number]) {
-      this.setDetailLayer(type, !this.detailLayers[type].show);
-    },
-
-    toggleResourceLayer(
-      type: ResourceType,
-      resource: ResourceName,
-      purity: keyof ResourceLayerData
-    ) {
-      if (type === "node") {
-        assert.ok(
-          isResourceNodeName(resource),
-          `"${resource}" is not a valid resource node name.`
-        );
-        this.toggleResourceNodeLayer(resource, purity);
-      } else {
-        assert.ok(
-          isResourceWellName(resource),
-          `"${resource}" is not a valid resource well name.`
-        );
-        this.toggleResourceWellLayer(resource, purity);
+    toggleLayerVisibility(id: string) {
+      const data = this.layerButtonData[id];
+      if (data !== undefined) {
+        this.setLayerVisibility(id, !data.show);
       }
     },
 
-    toggleResourceNodeLayer(
-      resource: ResourceNodeName,
-      purity: keyof ResourceLayerData
-    ) {
-      this.setResourceNodeLayer(
-        resource,
-        purity,
-        !this.resourceNodeLayers[resource][purity].show
+    registerLayerIcon(id: string, srcset: string) {
+      const data = this.layerButtonData[id];
+      if (data !== undefined) {
+        data.iconSrcset = srcset;
+      }
+    },
+
+    registerMarkerCount(id: string, count: number) {
+      const data = this.layerButtonData[id];
+      if (data !== undefined) {
+        data.markerCount = count;
+      }
+    },
+  },
+
+  getters: {
+    detailLayers: (state) => {
+      return Object.fromEntries(
+        Object.entries(state.layerButtonData).filter(
+          (data): data is [DetailName, DetailLayerButtonData] =>
+            data[1].group === LayerButtonGroup.Details
+        )
       );
     },
 
-    toggleResourceWellLayer(
-      resource: ResourceWellName,
-      purity: keyof ResourceLayerData
-    ) {
-      this.setResourceWellLayer(
-        resource,
-        purity,
-        !this.resourceWellLayers[resource][purity].show
+    resourceNodeLayers: (state) => {
+      const nodeDataLayers = Object.values(state.layerButtonData).filter(
+        (data): data is ResourceLayerButtonData =>
+          data.group === LayerButtonGroup.ResourceNodes
       );
+
+      const map = new Map<ResourceNodeName, PurityLayerButtonData>();
+      for (const layerData of nodeDataLayers) {
+        const element = getOrCreateMapElement(map, layerData.resource, () =>
+          Array.from({ length: purities.length })
+        );
+
+        element[purities.indexOf(layerData.purity)] = layerData;
+      }
+
+      return Object.fromEntries(map.entries());
     },
 
-    registerResourceNodeLayerIcon(
-      resource: string,
-      purity: string,
-      srcset: string
-    ) {
-      assert.ok(
-        isResourceNodeName(resource),
-        `"${resource}" is not a valid resource node name.`
+    resourceWellLayers: (state) => {
+      const wellDataLayers = Object.values(state.layerButtonData).filter(
+        (data): data is ResourceLayerButtonData =>
+          data.group === LayerButtonGroup.ResourceWells
       );
-      assert.ok(
-        isPurityName(purity),
-        `"${purity}" is not a valid purity name.`
-      );
-      this.resourceNodeLayers[resource][purity].iconSrcset = srcset;
-    },
 
-    registerResourceWellLayerIcon(
-      resource: string,
-      purity: string,
-      srcset: string
-    ) {
-      assert.ok(
-        isResourceWellName(resource),
-        `"${resource}" is not a valid resource well name.`
-      );
-      assert.ok(
-        isPurityName(purity),
-        `"${purity}" is not a valid purity name.`
-      );
-      this.resourceWellLayers[resource][purity].iconSrcset = srcset;
+      const map = new Map<ResourceWellName, PurityLayerButtonData>();
+      for (const layerData of wellDataLayers) {
+        const element = getOrCreateMapElement(map, layerData.resource, () =>
+          Array.from({ length: purities.length })
+        );
+
+        element[purities.indexOf(layerData.purity)] = layerData;
+      }
+
+      return Object.fromEntries(map.entries());
     },
   },
 });
@@ -214,41 +206,63 @@ if (typeof import.meta.hot === "object") {
   import.meta.hot.accept(acceptHMRUpdate(useMapDataStore, import.meta.hot));
 }
 
-export type ResourceLayerData = Record<PurityName, ButtonData>;
+export type PurityLayerButtonData = Tuple<
+  ResourceLayerButtonData,
+  typeof purities["length"]
+>;
 
-function createResourceLayerData(): ResourceLayerData {
-  return {
-    impure: {
-      show: false,
-    },
-    normal: {
-      show: false,
-    },
-    pure: {
-      show: false,
-    },
-  };
-}
-
-export type ButtonData = {
+export type LayerButtonData = {
+  id: string;
+  group: LayerButtonGroup;
   show: boolean;
   iconSrcset?: string;
+  markerCount?: number;
 };
 
-function createButtonData(): ButtonData {
+export type DetailLayerButtonData = LayerButtonData & {
+  name: DetailName;
+};
+export type ResourceLayerButtonData = LayerButtonData & {
+  resource: ResourceName;
+  purity: PurityName;
+};
+
+function createDetailLayerButtonData(
+  id: string,
+  group: LayerButtonGroup,
+  name: DetailName
+): DetailLayerButtonData {
   return {
+    id,
+    group,
+    name,
     show: false,
   };
 }
 
-function isResourceNodeName(name: string): name is ResourceNodeName {
+function createResourceLayerButtonData(
+  id: string,
+  group: LayerButtonGroup,
+  resource: ResourceName,
+  purity: PurityName
+): ResourceLayerButtonData {
+  return {
+    id,
+    group,
+    resource,
+    purity,
+    show: false,
+  };
+}
+
+export function isResourceNodeName(name: string): name is ResourceNodeName {
   return resourceNodes.includes(name);
 }
 
-function isResourceWellName(name: string): name is ResourceWellName {
+export function isResourceWellName(name: string): name is ResourceWellName {
   return resourceWells.includes(name);
 }
 
-function isPurityName(purity: string): purity is PurityName {
+export function isPurityName(purity: string): purity is PurityName {
   return purities.includes(purity);
 }

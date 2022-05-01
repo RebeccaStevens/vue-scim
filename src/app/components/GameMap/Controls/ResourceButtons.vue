@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import type {
-  ResourceLayerData,
-  ResourceName,
-  ResourceNodeName,
-  ResourceWellName,
-  ResourceType,
-} from "~/stores/map-data";
+import type { ResourceName, ResourceType, PurityLayerButtonData } from "~/stores/map-data";
 import { useMapDataStore } from "~/stores/map-data";
 
 export type Props = {
   resource: ResourceName;
-  resourceLayerData: ResourceLayerData;
+  resourceLayerData: PurityLayerButtonData;
   type: ResourceType;
 };
 
@@ -20,20 +14,12 @@ const { t } = useI18n();
 
 const mapDataStore = useMapDataStore();
 
-const toggleResourceGroup = (resource: ResourceName) => {
-  const layers = Object.entries(
-    props.type === "node"
-      ? mapDataStore.resourceNodeLayers[resource as ResourceNodeName]
-      : mapDataStore.resourceWellLayers[resource as ResourceWellName]
-  );
-  const state = layers.every(([purity, data]) => data.show);
-  for (const [purity] of layers) {
-    mapDataStore.setResourceLayer(props.type, resource, purity, !state);
+const toggleResourceGroup = () => {
+  const state = props.resourceLayerData.every((data) => data.show);
+  for (const data of props.resourceLayerData) {
+    mapDataStore.setLayerVisibility(data.id, !state);
   }
 };
-
-// TODO: count.
-const count = 10;
 </script>
 
 <template>
@@ -45,29 +31,38 @@ const count = 10;
       :label="t(`resources.resource.${resource}.name`)"
       :title="
         resource === 'geyser'
-          ? t(`pages.interactive-map.controls.static-elements.${type}.toggle-geyser.layers.title`)
+          ? t(
+              `pages.interactive-map.controls.static-elements.${type}.toggle-geyser.layers.title`,
+              resourceLayerData.reduce((sum, data) => sum + (data.markerCount ?? 0), 0)
+            )
           : t(
               `pages.interactive-map.controls.static-elements.${type}.toggle.layers.title`,
               {
                 resource: `resources.resource.${resource}.name`,
                 type: `resources.types.${type}.short-name`,
               },
-              count
+              resourceLayerData.reduce((sum, data) => sum + (data.markerCount ?? 0), 0)
             )
       "
-      @click="toggleResourceGroup(resource)"
+      @click="toggleResourceGroup()"
     />
     <ImageToggleButton
-      v-for="[purity, { show, iconSrcset }] in Object.entries(resourceLayerData)"
+      v-for="{ id, resource, purity, show, iconSrcset, markerCount } in resourceLayerData"
       :key="purity"
       :class="purity"
       :srcset="iconSrcset"
       :value="show"
+      :count="markerCount"
+      :disabled="markerCount === 0"
       :title="
         resource === 'geyser'
-          ? t(`pages.interactive-map.controls.static-elements.${type}.toggle-geyser.layer.title`, {
-              purity: `resources.purities.${purity}.name`,
-            })
+          ? t(
+              `pages.interactive-map.controls.static-elements.${type}.toggle-geyser.layer.title`,
+              {
+                purity: `resources.purities.${purity}.name`,
+              },
+              markerCount ?? 0
+            )
           : t(
               `pages.interactive-map.controls.static-elements.${type}.toggle.layer.title`,
               {
@@ -75,10 +70,10 @@ const count = 10;
                 purity: `resources.purities.${purity}.name`,
                 type: `resources.types.${type}.short-name`,
               },
-              count
+              markerCount ?? 0
             )
       "
-      @change="mapDataStore.toggleResourceLayer(type, resource, purity)"
+      @change="mapDataStore.toggleLayerVisibility(id)"
     />
   </div>
 </template>
@@ -100,7 +95,9 @@ const count = 10;
   aspect-ratio: 1;
   background-color: var(--purity-dull-color);
 
-  &.q-btn--active {
+  $margin: 0.125rem;
+
+  &:not(:disabled).q-btn--active {
     background-color: var(--purity-color);
   }
 
@@ -108,13 +105,27 @@ const count = 10;
     border: solid 0.15rem var(--purity-color, $primary);
   }
 
+  &:active::before,
+  &.q-btn--active::before {
+    border-bottom-width: 0.15rem;
+  }
+
   :deep(.q-btn__content) {
-    margin: 0.125rem;
+    margin: $margin;
     border-radius: 50%;
   }
 
   :deep(.q-img__container) {
-    margin: 0.125rem;
+    margin: $margin;
+  }
+
+  :deep(.q-badge) {
+    $border-width: 0.075rem;
+
+    margin: $margin - $border-width;
+    border-color: var(--purity-color, $primary);
+    border-width: $border-width;
+    --badge-width: 2ch;
   }
 
   :deep(.q-img__image) {

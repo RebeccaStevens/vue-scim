@@ -11,6 +11,10 @@ declare global {
       ? Array<[string, U]>
       : Array<{ [K in keyof T]: [K, T[K]] }[keyof T]>;
 
+    fromEntries<K extends PropertyKey, V>(
+      entries: Iterable<readonly [K, V]>
+    ): Record<K, V>;
+
     keys<T>(o: T): Array<keyof T>;
 
     values<T>(o: T): T extends ArrayLike<infer U> ? U[] : Array<T[keyof T]>;

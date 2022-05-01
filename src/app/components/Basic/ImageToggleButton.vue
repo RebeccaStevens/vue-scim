@@ -9,9 +9,6 @@ export type Props = {
   src?: QImgProps["src"];
   srcset?: QImgProps["srcset"];
   value?: ToggleButtonProps["value"];
-  dense?: ToggleButtonProps["dense"];
-  label?: ToggleButtonProps["label"];
-  title?: ToggleButtonProps["title"];
   ratio?: QImgProps["ratio"];
   fit?: QImgProps["fit"];
 };
@@ -34,14 +31,7 @@ const onChange = () => {
 </script>
 
 <template>
-  <ToggleButton
-    :value="value"
-    :dense="dense"
-    :label="label"
-    :title="title"
-    class="image-toggle-button"
-    @change="onChange"
-  >
+  <ToggleButton :value="value" class="image-toggle-button" @change="onChange">
     <q-img :src="src" :srcset="srcset" :ratio="ratio" :fit="fit" />
   </ToggleButton>
 </template>

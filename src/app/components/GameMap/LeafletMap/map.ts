@@ -6,9 +6,8 @@ import type { WatchStopHandle } from "vue";
 import "leaflet/dist/leaflet.css";
 
 import * as assert from "~/assert";
-import type { ResourceLayerData } from "~/stores/map-data";
 import { backgroundLayers, useMapDataStore } from "~/stores/map-data";
-import { transpose, getResourcePurityId } from "~/utils";
+import { transpose } from "~/utils";
 
 import type { LayersDataMap, POIs } from "./details";
 import { loadDetails } from "./details";
@@ -216,19 +215,14 @@ function setupMapLayers<V extends keyof typeof backgroundLayers>(
 }
 
 function setupDetailLayerToggles(layersDataMap: LayersDataMap, map: L.Map) {
-  const layerRefs = [
-    ...Object.entries(mapDataStore.detailLayers).map(
-      ([name, value]) =>
-        [name, toRef(mapDataStore.detailLayers[name], "show"), value] as const
-    ),
-    ...mapResourcesToRefs(mapDataStore.resourceNodeLayers, "nodes"),
-    ...mapResourcesToRefs(mapDataStore.resourceWellLayers, "wells"),
-  ];
+  const layerRefs = Object.values(mapDataStore.layerButtonData).map(
+    (data) => [data.id, toRef(data, "show"), data] as const
+  );
 
   const [cleanupDetailLayers, layerPOIs] = transpose(
-    layerRefs.map(([name, ref, currentValue]) => {
-      const detailLayerData = layersDataMap.get(name);
-      assert.isDefined(detailLayerData, `Cannot find layer: ${name}`);
+    layerRefs.map(([id, ref, currentValue]) => {
+      const detailLayerData = layersDataMap.get(id);
+      assert.isDefined(detailLayerData, `Cannot find layer: ${id}`);
 
       const updateFn = (newValue: boolean) => {
         const hasLayer = map.hasLayer(detailLayerData.layer);
@@ -260,21 +254,6 @@ function setupDetailLayerToggles(layersDataMap: LayersDataMap, map: L.Map) {
     layerPOIs,
     cleanup,
   };
-
-  function mapResourcesToRefs(
-    resourceLayers: Readonly<Record<string, ResourceLayerData>>,
-    type: string
-  ) {
-    return Object.entries(resourceLayers).flatMap(([resource, purities]) =>
-      Object.entries(purities).map(([purity, value]) => {
-        return [
-          `${getResourcePurityId(resource, purity)}-${type}`,
-          toRef(purities[purity], "show"),
-          value,
-        ] as const;
-      })
-    );
-  }
 }
 
 /* eslint-enable unicorn/no-array-method-this-argument */

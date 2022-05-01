@@ -3,8 +3,8 @@ import type { ReadonlyDeep } from "type-fest";
 
 import type { GamePointTuple } from "~/components/GameMap/types";
 import icons from "~/icons";
-import { useMapDataStore } from "~/stores/map-data";
-import { getOrCreateMapElement, getResourcePurityId } from "~/utils";
+import { LayerButtonGroup, useMapDataStore } from "~/stores/map-data";
+import { getOrCreateMapElement, getPOIsId } from "~/utils";
 
 import { polygonLine } from "./draw-extendsions";
 import * as mapUtils from "./utils";
@@ -278,14 +278,7 @@ export async function loadDetails(
     );
 
   for (const [type, [resource, purity, srcset]] of iconsToRegister) {
-    switch (type) {
-      case "nodes":
-        mapDataStore.registerResourceNodeLayerIcon(resource, purity, srcset);
-        break;
-      case "wells":
-        mapDataStore.registerResourceWellLayerIcon(resource, purity, srcset);
-        break;
-    }
+    mapDataStore.registerLayerIcon(getPOIsId(type, resource, purity), srcset);
   }
 
   return layers;
@@ -297,7 +290,13 @@ function setupResourceNodes(
   layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupResources(nodes, map, layersData, mapIcons, "nodes");
+  setupResources(
+    nodes,
+    map,
+    layersData,
+    mapIcons,
+    LayerButtonGroup.ResourceNodes
+  );
 }
 
 function setupResourceWells(
@@ -306,7 +305,13 @@ function setupResourceWells(
   layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupResources(wells, map, layersData, mapIcons, "wells");
+  setupResources(
+    wells,
+    map,
+    layersData,
+    mapIcons,
+    LayerButtonGroup.ResourceWells
+  );
 }
 
 function setupResources(
@@ -314,9 +319,9 @@ function setupResources(
   map: L.Map,
   layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>,
-  type: string
+  group: LayerButtonGroup
 ) {
-  setupPOIs(resources, map, layersData, mapIcons, type);
+  setupPOIs(resources, map, layersData, mapIcons, group);
 }
 
 function setupPowerSlugs(
@@ -325,7 +330,7 @@ function setupPowerSlugs(
   layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupPOIs(powerSlugs, map, layersData, mapIcons, "powerSlugs");
+  setupCollectiblePOIs(powerSlugs, map, layersData, mapIcons);
 }
 
 function setupDropPods(
@@ -334,7 +339,7 @@ function setupDropPods(
   layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupPOIs(dropPods, map, layersData, mapIcons, "dropPods");
+  setupCollectiblePOIs(dropPods, map, layersData, mapIcons);
 }
 
 function setupArtifacts(
@@ -343,7 +348,7 @@ function setupArtifacts(
   layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupPOIs(artifacts, map, layersData, mapIcons, "artifacts");
+  setupCollectiblePOIs(artifacts, map, layersData, mapIcons);
 }
 
 function setupCollectibles(
@@ -352,7 +357,22 @@ function setupCollectibles(
   layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>
 ) {
-  setupPOIs(collectibles, map, layersData, mapIcons, "collectibles");
+  setupCollectiblePOIs(collectibles, map, layersData, mapIcons);
+}
+
+function setupCollectiblePOIs(
+  collectibles: CatergoryPOIsBase,
+  map: L.Map,
+  layersData: LayersDataMap,
+  mapIcons: Map<string, L.DivIcon>
+) {
+  setupPOIs(
+    collectibles,
+    map,
+    layersData,
+    mapIcons,
+    LayerButtonGroup.Collectibles
+  );
 }
 
 function setupPOIs(
@@ -360,27 +380,25 @@ function setupPOIs(
   map: L.Map,
   layersData: LayersDataMap,
   mapIcons: Map<string, L.DivIcon>,
-  type: string
+  group: LayerButtonGroup
 ) {
   for (const poisData of objectPois.options) {
     for (const pois of poisData.options) {
-      const name = `${
-        isResourcesData(pois)
-          ? getResourcePurityId(pois.type, pois.purity)
-          : pois.type
-      }-${type}`;
+      const id = getPOIsId(
+        group,
+        pois.type,
+        (pois as { purity?: string }).purity
+      );
 
-      const layerData = getOrCreateMapElement(layersData, name, () => ({
+      mapDataStore.registerMarkerCount(id, pois.markers.length);
+
+      const layerData = getOrCreateMapElement(layersData, id, () => ({
         layer: L.layerGroup(),
         pois,
-        type,
+        type: group,
       }));
 
-      const mapIcon = getOrCreateMapElement(
-        mapIcons,
-        name,
-        createMapIcon(pois)
-      );
+      const mapIcon = getOrCreateMapElement(mapIcons, id, createMapIcon(pois));
 
       const currentMarkerOptions = { icon: mapIcon, riseOnHover: true };
 
@@ -403,7 +421,9 @@ function setupButtons(
 ) {
   for (const button of buttons.options) {
     for (const entity of button.options) {
-      const layerData = getOrCreateMapElement(layersData, entity.type, () => ({
+      const id = getPOIsId(LayerButtonGroup.Details, entity.type);
+
+      const layerData = getOrCreateMapElement(layersData, id, () => ({
         layer: L.layerGroup(),
         pois: entity,
       }));
@@ -434,6 +454,9 @@ function setupSpawnLocations(
   map: L.Map,
   layerGroup: L.LayerGroup
 ) {
+  const id = getPOIsId(LayerButtonGroup.Details, spawn.type);
+  mapDataStore.registerMarkerCount(id, spawn.markers.length);
+
   for (const marker of spawn.markers) {
     L.circle(mapUtils.unproject(map, [marker.x, marker.y]), {
       radius: convertToMapUnit(marker.radius),
@@ -457,7 +480,12 @@ function setupWorldBorder(
 }
 
 function setupCaves(caves: Caves, map: L.Map, layerGroup: L.LayerGroup) {
-  for (const marker of Object.values(caves.markers)) {
+  const markers = Object.values(caves.markers);
+
+  const id = getPOIsId(LayerButtonGroup.Details, caves.type);
+  mapDataStore.registerMarkerCount(id, markers.length);
+
+  for (const marker of markers) {
     const polygonPoints = marker.points.map((value) =>
       mapUtils.unproject(map, value)
     );
@@ -488,7 +516,12 @@ function setupCaves(caves: Caves, map: L.Map, layerGroup: L.LayerGroup) {
 }
 
 function setupRoads(roads: Roads, map: L.Map, layerGroup: L.LayerGroup) {
-  for (const marker of Object.values(roads.markers)) {
+  const markers = Object.values(roads.markers);
+
+  const id = getPOIsId(LayerButtonGroup.Details, roads.type);
+  mapDataStore.registerMarkerCount(id, markers.length);
+
+  for (const marker of markers) {
     const points = marker.points.map((value) => mapUtils.unproject(map, value));
 
     const roadPolyline = polygonLine(points, {
@@ -563,6 +596,9 @@ function setupPointMarkers(
   layerGroup: L.LayerGroup,
   options: L.CircleMarkerOptions
 ) {
+  const id = getPOIsId(LayerButtonGroup.Details, point.type);
+  mapDataStore.registerMarkerCount(id, point.markers.length);
+
   for (const marker of Object.values(point.markers)) {
     const polygon = L.circle(
       mapUtils.unproject(map, [marker.x, marker.y]),
