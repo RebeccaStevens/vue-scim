@@ -4,9 +4,7 @@
       <NavBar />
     </q-header>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
+    <router-view />
 
     <q-footer elevated class="bg-grey-8 text-white">
       <Footer />

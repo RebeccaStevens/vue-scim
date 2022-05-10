@@ -3,7 +3,11 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <p>{{ t("pages.home.label") }}</p>
+  <q-page-container>
+    <q-page>
+      <p>{{ t("pages.home.label") }}</p>
+    </q-page>
+  </q-page-container>
 </template>
 
 <route lang="yaml">

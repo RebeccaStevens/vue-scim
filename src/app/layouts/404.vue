@@ -1,7 +1,4 @@
-<script setup lang="ts">
-const router = useRouter();
-const { t } = useI18n();
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <q-layout view="hHh lpR fFf">
@@ -9,19 +6,7 @@ const { t } = useI18n();
       <NavBar />
     </q-header>
 
-    <q-page-container text-center>
-      <div mt-12 text-4xl>
-        <div i-carbon-warning inline-block />
-      </div>
-
-      <div class="capitalize">
-        {{ t("navigation.not-found.label") }}
-      </div>
-
-      <div>
-        <q-btn m="3 t8" @click="router.back()">{{ t("navigation.back.label") }}</q-btn>
-      </div>
-    </q-page-container>
+    <router-view />
 
     <q-footer elevated class="bg-grey-8 text-white">
       <Footer />
