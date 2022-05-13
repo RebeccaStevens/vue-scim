@@ -1,0 +1,12 @@
+.impure {
+  --purity-color: var(--purity-impure-color);
+  --purity-pale-color: var(--purity-impure-pale-color);
+}
+.normal {
+  --purity-color: var(--purity-normal-color);
+  --purity-pale-color: var(--purity-normal-pale-color);
+}
+.pure {
+  --purity-color: var(--purity-pure-color);
+  --purity-pale-color: var(--purity-pure-pale-color);
+}

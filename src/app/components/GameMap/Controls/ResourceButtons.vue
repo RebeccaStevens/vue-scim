@@ -93,7 +93,7 @@ const toggleResourceGroup = () => {
 
 .image-toggle-button {
   aspect-ratio: 1;
-  background-color: var(--purity-dull-color);
+  background-color: var(--purity-pale-color);
 
   $margin: 0.125rem;
 

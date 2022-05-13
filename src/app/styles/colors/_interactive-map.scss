@@ -1,0 +1,15 @@
+@use "./functions" as *;
+
+$purity-impure-color: #d23430;
+$purity-normal-color: #f26418;
+$purity-pure-color: #80b139;
+
+:root {
+  --purity-impure-color: #{$purity-impure-color};
+  --purity-normal-color: #{$purity-normal-color};
+  --purity-pure-color: #{$purity-pure-color};
+
+  @include lchFrom(--purity-impure-pale-color, --purity-impure-color, $purity-impure-color, 75%, -75%);
+  @include lchFrom(--purity-normal-pale-color, --purity-normal-color, $purity-normal-color, 75%, -75%);
+  @include lchFrom(--purity-pure-pale-color, --purity-pure-color, $purity-pure-color, 75%, -75%);
+}

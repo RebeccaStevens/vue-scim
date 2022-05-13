@@ -10,8 +10,6 @@ import VueI18n from "@intlify/vite-plugin-vue-i18n";
 import { quasar, transformAssetUrls } from "@quasar/vite-plugin";
 import Vue from "@vitejs/plugin-vue";
 import { pipe, page, map } from "iter-ops";
-import LinkAttributes from "markdown-it-link-attributes";
-import Prism from "markdown-it-prism";
 import rollupNodePolyFill from "rollup-plugin-node-polyfills";
 import rollupUnassert from "rollup-plugin-unassert";
 import type { FormatEnum } from "sharp";
@@ -23,14 +21,11 @@ import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 import { imagetools as imagetoolsPlugin } from "vite-imagetools";
 import Inspect from "vite-plugin-inspect";
-import Markdown from "vite-plugin-md";
 import Pages from "vite-plugin-pages";
 import { VitePWA } from "vite-plugin-pwa";
 import Layouts from "vite-plugin-vue-layouts";
 import generateSitemap from "vite-ssg-sitemap";
 import tsconfigPaths from "vite-tsconfig-paths";
-
-const markdownWrapperClasses = "prose prose-sm m-auto text-left";
 
 const dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
@@ -142,9 +137,7 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
 
-      quasar({
-        sassVariables: "src/app/styles/quasar-variables.sass",
-      }),
+      quasar(),
 
       // https://github.com/hannoeru/vite-plugin-pages
       Pages({
@@ -183,10 +176,8 @@ export default defineConfig(({ command, mode }) => {
       // https://github.com/antfu/unplugin-vue-components
       Components({
         resolvers: [QuasarResolver()],
-        // allow auto load markdown components under `./components/`
-        extensions: ["vue", "md"],
-        // allow auto import and register components used in markdown
-        include: [/\.vue$/u, /\.vue\?vue/u, /\.md$/u],
+        extensions: ["vue"],
+        include: [/\.vue$/u],
         dirs: "app/components",
         dts:
           mode === "test"
@@ -198,24 +189,6 @@ export default defineConfig(({ command, mode }) => {
       // see unocss.config.ts for config
       Unocss({
         configFile: path.resolve(dirname, "unocss.config.ts"),
-      }),
-
-      // https://github.com/antfu/vite-plugin-md
-      // Don't need this? Try vitesse-lite: https://github.com/antfu/vitesse-lite
-      Markdown({
-        wrapperClasses: markdownWrapperClasses,
-        headEnabled: true,
-        markdownItSetup(md) {
-          // https://prismjs.com/
-          md.use(Prism);
-          md.use(LinkAttributes, {
-            matcher: (link: string) => /^https?:\/\//u.test(link),
-            attrs: {
-              target: "_blank",
-              rel: "noopener",
-            },
-          });
-        },
       }),
 
       // https://github.com/antfu/vite-plugin-pwa

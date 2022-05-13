@@ -9,6 +9,7 @@ specifiers:
   '@iconify/json': ^2.1.40
   '@import-meta-env/unplugin': ^0.1.8
   '@intlify/vite-plugin-vue-i18n': ^3.4.0
+  '@oddbird/blend': ^0.2.3
   '@quasar/extras': ^1.13.6
   '@quasar/vite-plugin': ^1.0.9
   '@rebeccastevens/eslint-config': ^1.3.20
@@ -16,7 +17,6 @@ specifiers:
   '@types/glob': ^7.2.0
   '@types/leaflet': ^1.7.9
   '@types/lodash-es': ^4.17.6
-  '@types/markdown-it-link-attributes': ^3.0.1
   '@types/nprogress': ^0.2.0
   '@types/sharp': ^0.30.2
   '@typescript-eslint/eslint-plugin': ^5.23.0
@@ -61,8 +61,6 @@ specifiers:
   iter-ops: ^1.6.2
   leaflet: ^1.8.0
   lint-staged: ^12.4.1
-  markdown-it-link-attributes: ^4.0.0
-  markdown-it-prism: ^2.2.4
   markdownlint-cli: ^0.31.1
   nprogress: ^0.2.0
   pinia: ^2.0.14
@@ -125,13 +123,13 @@ devDependencies:
   '@iconify/json': 2.1.40
   '@import-meta-env/unplugin': 0.1.8_dotenv@16.0.1+vite@2.9.8
   '@intlify/vite-plugin-vue-i18n': 3.4.0_vite@2.9.8+vue-i18n@9.1.10
+  '@oddbird/blend': 0.2.3
   '@quasar/vite-plugin': 1.0.9_zayb3oh4shxgh2unellshakqli
   '@rebeccastevens/eslint-config': 1.3.20_mez3uzxfaafq4gywutmzq4uzly
   '@rushstack/eslint-patch': 1.1.3
   '@types/glob': 7.2.0
   '@types/leaflet': 1.7.9
   '@types/lodash-es': 4.17.6
-  '@types/markdown-it-link-attributes': 3.0.1
   '@types/nprogress': 0.2.0
   '@types/sharp': 0.30.2
   '@typescript-eslint/eslint-plugin': 5.23.0_c63nfttrfhylg3zmgcxfslaw44
@@ -171,8 +169,6 @@ devDependencies:
   husky: 8.0.1
   imagetools-core: 3.0.2
   lint-staged: 12.4.1
-  markdown-it-link-attributes: 4.0.0
-  markdown-it-prism: 2.2.4
   markdownlint-cli: 0.31.1
   pnpm: 7.0.1
   prettier: 2.6.2
@@ -2047,6 +2043,10 @@ packages:
       fastq: 1.13.0
     dev: true
 
+  /@oddbird/blend/0.2.3:
+    resolution: {integrity: sha512-P3MYNqeWTQ4RZdmRDOigxpcUK+pvqr+aTzHYnHxF84xmf/1quhCpbTsWZE6TPUifSQ346Cf+e4j0Zgn3fIUmSQ==}
+    dev: true
+
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: true
@@ -2267,12 +2267,6 @@ packages:
 
   /@types/lodash/4.14.181:
     resolution: {integrity: sha512-n3tyKthHJbkiWhDZs3DkhkCzt2MexYHXlX0td5iMplyfwketaOeKboEVBqzceH7juqvEg3q5oUoBFxSLu7zFag==}
-    dev: true
-
-  /@types/markdown-it-link-attributes/3.0.1:
-    resolution: {integrity: sha512-K8RnNb1q8j7rDOJbMF7AnlhCC/45BjrQ8z3WZWOrvkBIl8u9RXvmBdG/hfpnmK1JhhEZcmFEKWt+ilW1Mly+2Q==}
-    dependencies:
-      '@types/markdown-it': 12.2.3
     dev: true
 
   /@types/markdown-it/12.2.3:
@@ -3043,11 +3037,6 @@ packages:
       uri-js: 4.4.1
     dev: true
 
-  /amdefine/1.0.1:
-    resolution: {integrity: sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=}
-    engines: {node: '>=0.4.2'}
-    dev: true
-
   /ansi-colors/4.1.1:
     resolution: {integrity: sha512-JoX0apGbHaUJBNl6yF+p6JAFYZ666/hhCGKN5t9QFjbJQKUU/g8MNbFDbvfrgKXvI1QpZplPOnwIo99lX/AAmA==}
     engines: {node: '>=6'}
@@ -3427,14 +3416,6 @@ packages:
     dependencies:
       function-bind: 1.1.1
       get-intrinsic: 1.1.1
-    dev: true
-
-  /call-matcher/2.0.0:
-    resolution: {integrity: sha512-CIDC5wZZfZ2VjZu849WQckS58Z3pJXFfRaSjNjgo/q3in5zxkhTwVL83vttgtmvyLG7TuDlLlBya7SKP6CjDIA==}
-    dependencies:
-      deep-equal: 1.1.1
-      espurify: 2.1.1
-      estraverse: 4.3.0
     dev: true
 
   /callsites/3.1.0:
@@ -4295,17 +4276,6 @@ packages:
     engines: {node: '>=0.12'}
     dependencies:
       type-detect: 4.0.8
-    dev: true
-
-  /deep-equal/1.1.1:
-    resolution: {integrity: sha512-yd9c5AdiqVcR+JjcwUQb9DkhJc8ngNr0MahEBGvDiJw8puWab2yZlh+nkasOnZP+EGTAP6rRp2JzJhJZzvNF8g==}
-    dependencies:
-      is-arguments: 1.1.1
-      is-date-object: 1.0.5
-      is-regex: 1.1.4
-      object-is: 1.1.5
-      object-keys: 1.1.1
-      regexp.prototype.flags: 1.4.1
     dev: true
 
   /deep-equal/2.0.5:
@@ -7080,17 +7050,6 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /markdown-it-link-attributes/4.0.0:
-    resolution: {integrity: sha512-ssjxSLlLfQBkX6BvAx1rCPrx7ZoK91llQQvS3P7KXvlbnVD34OUkfXwWecN7su/7mrI/HOW0RI5szdJOIqYC3w==}
-    dev: true
-
-  /markdown-it-prism/2.2.4:
-    resolution: {integrity: sha512-7oQVppKjiZqVQo7s7eLTIs3o/0hdvqAWDW8lvRel6eUCGD4iXjKbSZjvdHZFA2ZnCkQUF47kbvtWZDVQrv7zyQ==}
-    engines: {node: '>=6.0.0'}
-    dependencies:
-      prismjs: 1.28.0
-    dev: true
-
   /markdown-it/12.3.2:
     resolution: {integrity: sha512-TchMembfxfNVpHkbtriWltGWc+m3xszaRD0CZup7GFFhzIgQqxIfn3eGj1yZpfuflzPvfkt611B2Q/Bsk1YnGg==}
     hasBin: true
@@ -7327,12 +7286,6 @@ packages:
 
   /ms/2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
-    dev: true
-
-  /multi-stage-sourcemap/0.3.1:
-    resolution: {integrity: sha512-UiTLYjqeIoVnJHyWGskwMKIhtZKK9uXUjSTWuwatarrc0d2H/6MAVFdwvEA/aKOHamIn7z4tfvxjz+FYucFpNQ==}
-    dependencies:
-      source-map: 0.1.43
     dev: true
 
   /mute-stream/0.0.7:
@@ -7924,11 +7877,6 @@ packages:
     resolution: {integrity: sha512-EL9ifuU/F8tEldoCa2sspiiLWysCL54xDbf2gN/ubwdtbuJROqOGopG5kSwunapwaioT+jLUQ/Ky+7jnv62xJA==}
     dev: false
 
-  /prismjs/1.28.0:
-    resolution: {integrity: sha512-8aaXdYvl1F7iC7Xm1spqSaY/OJBpYW3v+KJ+F17iYxvdc8sfjW194COK5wVhMZX45tGteiBQgdvD/nhxcRwylw==}
-    engines: {node: '>=6'}
-    dev: true
-
   /process-nextick-args/2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
     dev: true
@@ -8273,17 +8221,6 @@ packages:
       terser: 5.12.1
     dev: true
 
-  /rollup-plugin-unassert/0.4.0:
-    resolution: {integrity: sha512-ZVV88o3vYSiGVFmNH4Q+0J5j7iF3vRDkhxuyCrXwPUhZlBYPQGmQz1T3RUX0MRSI4+Xr6t5W/CQFGHve9tmyhA==}
-    dependencies:
-      '@rollup/pluginutils': 4.2.1
-      acorn: 8.7.1
-      convert-source-map: 1.8.0
-      escodegen: 2.0.0
-      multi-stage-sourcemap: 0.3.1
-      unassert: 1.6.0
-    dev: true
-
   /rollup-pluginutils/2.8.2:
     resolution: {integrity: sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==}
     dependencies:
@@ -8578,13 +8515,6 @@ packages:
     dependencies:
       buffer-from: 1.1.2
       source-map: 0.6.1
-    dev: true
-
-  /source-map/0.1.43:
-    resolution: {integrity: sha1-wkvBRspRfBRx9drL4lcbK3+eM0Y=}
-    engines: {node: '>=0.8.0'}
-    dependencies:
-      amdefine: 1.0.1
     dev: true
 
   /source-map/0.5.7:
@@ -9211,18 +9141,6 @@ packages:
     resolution: {integrity: sha512-6iCVm2omGJbsu3JWac+p6kUiOpg3wFO2f8lIXjfEb8RrmLjzog1wTPMmwKB7swfzzqxj9YM+sGUM++u1qN4qJg==}
     engines: {node: '>=0.8.0'}
     hasBin: true
-    dev: true
-
-  /unassert/1.6.0:
-    resolution: {integrity: sha512-GoMtWTwGSxSFuRD0NKmbjlx3VJkgvSogzDzMPpJXYmBZv6MIWButsyMqEYhMx3NI4osXACcZA9mXiBteXyJtRw==}
-    dependencies:
-      acorn: 7.4.1
-      call-matcher: 2.0.0
-      deep-equal: 1.1.1
-      espurify: 2.1.1
-      estraverse: 4.3.0
-      esutils: 2.0.3
-      object-assign: 4.1.1
     dev: true
 
   /unbox-primitive/1.0.1:

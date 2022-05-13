@@ -1,0 +1,9 @@
+@use "../../../../node_modules/@oddbird/blend";
+
+@mixin lchFrom($name, $from, $color, $l: 0%, $c: 0%, $h: 0%) {
+  #{$name}: blend.scale($color, $l: $l, $c: $c, $h: $h);
+
+  @supports (color: lch(from black l c h)) {
+    #{$name}: #{"lch(from var(#{$from}), calc(l + #{$l}) calc(c + #{$c}) calc(h + #{$h}))"};
+  }
+}
