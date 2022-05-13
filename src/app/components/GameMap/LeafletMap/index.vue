@@ -30,7 +30,7 @@ onUnmounted(cleanup);
 </script>
 
 <template>
-  <div relative class="fit">
+  <div class="relative-position fit">
     <div id="leaflet-game-map-container" class="fit"></div>
     <resize-observer @notify="mapInstance?.map.invalidateSize()" />
   </div>

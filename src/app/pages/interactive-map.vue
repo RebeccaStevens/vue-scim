@@ -8,7 +8,7 @@ const mq = useMq();
 </script>
 
 <template>
-  <div class="page-map">
+  <div class="page-map relative-position">
     <q-drawer
       v-model="drawerRight"
       side="right"
@@ -73,10 +73,6 @@ $controlsMaxWidth: 32rem;
 
 $toolbarHeight: 50px;
 
-.page-map {
-  position: relative;
-}
-
 .game-map {
   margin: 0;
   position: absolute;
@@ -85,10 +81,6 @@ $toolbarHeight: 50px;
 
 .controls {
   margin: $spacing $spacing $spacing math.div($spacing, 2);
-
-  > :deep(*) {
-    // pointer-events: all;
-  }
 }
 
 .control-drawer-mini {
@@ -97,7 +89,6 @@ $toolbarHeight: 50px;
 
 .drawer-state-expand,
 .drawer-state-collapse {
-  // pointer-events: all;
   position: absolute;
   top: calc(50% - 1.2em);
 
@@ -123,7 +114,6 @@ $toolbarHeight: 50px;
 
 .q-drawer-container :deep(.q-drawer) {
   background-color: transparent;
-  // pointer-events: none;
 
   &:not(.q-drawer--mini) {
     width: $controlsWidth !important;
