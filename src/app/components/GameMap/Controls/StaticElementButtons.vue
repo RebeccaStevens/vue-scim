@@ -21,8 +21,6 @@ const mapData = storeToRefs(mapDataStore);
       active-color="primary"
       indicator-color="primary"
       narrow-indicator
-      left-icon="i-carbon-arrow-left"
-      right-icon="i-carbon-arrow-right"
     >
       <q-tab
         name="details"

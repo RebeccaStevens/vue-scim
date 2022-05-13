@@ -21,13 +21,7 @@ const menu = useMainMenu();
           class="menu-item"
         ></q-btn>
 
-        <q-btn-dropdown
-          v-else
-          :label="menuItem.label"
-          flat
-          dropdown-icon="i-ic-baseline-arrow-drop-down"
-          class="menu-item"
-        >
+        <q-btn-dropdown v-else :label="menuItem.label" flat class="menu-item">
           <q-list>
             <div v-for="(submenuItem, submenuIndex) in menuItem.submenu" :key="submenuIndex">
               <q-separator v-if="submenuItem.type === 'divider'"></q-separator>
@@ -51,7 +45,6 @@ const menu = useMainMenu();
         class="menu-item q-btn-icon"
         :icon="currentLanguageMeta.icon"
         :title="t('settings.setting.change-language.change.title')"
-        dropdown-icon="i-ic-baseline-arrow-drop-down"
       >
         <q-list>
           <q-item
@@ -77,7 +70,6 @@ const menu = useMainMenu();
       <q-btn-dropdown
         flat
         class="menu-item q-btn-icon"
-        dropdown-icon="i-ic-baseline-arrow-drop-down"
         icon="i-carbon-user-avatar-filled"
         :title="t('settings.title')"
       >
