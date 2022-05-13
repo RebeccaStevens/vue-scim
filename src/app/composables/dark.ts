@@ -1,11 +1,17 @@
 import { Dark as QuasarDark } from "quasar";
 
-// these APIs are auto-imported from @vueuse/core
-export const isDark = useDark();
-export const toggleDark = useToggle(isDark);
+export const isDark = computed({
+  get() {
+    return QuasarDark.isActive;
+  },
+  set(v: boolean) {
+    QuasarDark.set(v);
+    localStorage.setItem("preferred-color-scheme", v ? "dark" : "light");
+  },
+});
 
-QuasarDark.set(isDark.value);
+export const toggleDark = QuasarDark.toggle;
 
-watch(isDark, (newValue) => {
-  QuasarDark.set(newValue);
+watch(isDark, (value) => {
+  document.documentElement.classList.toggle("dark", value);
 });
