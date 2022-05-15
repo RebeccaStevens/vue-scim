@@ -81,6 +81,10 @@ $toolbarHeight: 50px;
 
 .controls {
   margin: $spacing $spacing $spacing math.div($spacing, 2);
+
+  > :deep(*) {
+    pointer-events: all;
+  }
 }
 
 .control-drawer-mini {
@@ -91,6 +95,7 @@ $toolbarHeight: 50px;
 .drawer-state-collapse {
   position: absolute;
   top: calc(50% - 1.2em);
+  pointer-events: all;
 
   &.dense {
     top: calc(50% - 1.5em);
@@ -114,6 +119,14 @@ $toolbarHeight: 50px;
 
 .q-drawer-container :deep(.q-drawer) {
   background-color: transparent;
+
+  &:not(:has(.controls :hover)) {
+    pointer-events: none;
+  }
+
+  .q-scrollarea__thumb {
+    pointer-events: all;
+  }
 
   &:not(.q-drawer--mini) {
     width: $controlsWidth !important;
