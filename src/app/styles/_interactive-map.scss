@@ -1,3 +1,7 @@
+.leaflet-container {
+  background-color: transparent !important;
+}
+
 .impure {
   --purity-color: var(--purity-impure-color);
   --purity-pale-color: var(--purity-impure-pale-color);

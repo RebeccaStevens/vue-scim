@@ -1,0 +1,50 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
+
+// 'map', 'transform', 'select', or 'project' function. Iterate over a list,
+// performing a function on each item, and collecting the new items. Each
+// function takes an item as a first argument and returns a transformed item.
+// You can pass additional arguments to the function too, which is a decent poor
+// man's function composition.
+// (I didn't call this f-map because the term 'map' is already used in Sass to
+// denote a hash or dictionary.)
+@function f-apply($func, $list, $args...) {
+  $new-list: ();
+  @each $item in $list {
+    $new-list: list.append($new-list, meta.call($func, $item, $args...));
+  }
+  @return $new-list;
+}
+
+// Reduce a list to a single value. Each function takes the previous value, an
+// item, and additional arguments, and returns a transformed value. Sadly, you
+// can't leave out the initial value (can't have default arguments before rest
+// arguments), so if you don't want an initial value, set it to null.
+@function f-fold($func, $list, $initial, $args...) {
+  $start: 1;
+  @if $initial == null {
+    // If there's no initial value, use the first in the list.
+    $start: 2;
+    $initial: list.nth($list, 1);
+  }
+  $prev: $initial;
+  @for $i from $start through list.length($list) {
+    $next: list.nth($list, $i);
+    $prev: meta.call($func, $prev, $next, $args...);
+  }
+  @return $prev;
+}
+
+// Filter items from a list. Each function takes an item (and additional
+// arguments) and returns a boolean value indicating whether the item passed the
+// filter.
+@function f-filter($func, $list, $args...) {
+  $new-list: ();
+  @each $item in $list {
+    @if meta.call($func, $item, $args...) {
+      $new-list: list.append($new-list, $item);
+    }
+  }
+  @return $new-list;
+}

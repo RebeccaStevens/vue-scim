@@ -55,7 +55,7 @@ const nodes = [
   </q-card-section>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .node {
   border-radius: 0.5rem;
   padding: 0.25rem;
@@ -63,6 +63,7 @@ const nodes = [
   width: 3.5rem;
   aspect-ratio: 1;
 }
+
 .node.checked {
   box-shadow: 0 0 0 0.2rem rgb(243 156 18 / 50%);
 }

@@ -21,7 +21,17 @@ const menu = useMainMenu();
           class="menu-item"
         ></q-btn>
 
-        <q-btn-dropdown v-else :label="menuItem.label" flat class="menu-item">
+        <q-btn
+          v-else-if="menuItem.type === 'image-link'"
+          :to="menuItem.link"
+          flat
+          :title="menuItem.title"
+          class="menu-item image"
+        >
+          <q-img :srcset="menuItem.srcset" :style="`aspect-ratio: ${menuItem.ratio}`" />
+        </q-btn>
+
+        <q-btn-dropdown v-else :label="menuItem.label" flat class="menu-item list">
           <q-list>
             <div v-for="(submenuItem, submenuIndex) in menuItem.submenu" :key="submenuIndex">
               <q-separator v-if="submenuItem.type === 'divider'"></q-separator>
@@ -105,11 +115,35 @@ const menu = useMainMenu();
   </q-toolbar>
 </template>
 
-<style scoped>
-.menu-item.q-btn-icon {
-  margin: 0 0.125rem;
+<style lang="scss" scoped>
+.q-toolbar {
+  height: 64px;
 }
+
+.menu-item {
+  font-size: 16px;
+  padding: 4px 12px;
+
+  &.image {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  &.q-btn-icon {
+    margin: 0 0.125rem;
+    padding: 0.25rem 0.25rem;
+  }
+
+  .q-img {
+    height: 44px;
+  }
+}
+
 .q-item {
-  text-transform: capitalize;
+  padding: 0.8rem 1.5rem;
+
+  .q-item__section--avatar {
+    min-width: unset;
+  }
 }
 </style>

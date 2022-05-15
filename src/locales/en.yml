@@ -10,6 +10,7 @@ navigation:
 pages:
   home:
     label: home
+    title: Home
 
   planners:
     label: planners
@@ -40,6 +41,12 @@ pages:
         short-label: load
 
     controls:
+      buttons:
+        open:
+          title: Open map controls.
+        close:
+          title: Close map controls.
+
       static-elements:
         map:
           in-game:

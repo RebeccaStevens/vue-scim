@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import * as icons from "~/raw/img/icons";
+import * as icons from "~/icons";
 import { useMapDataStore } from "~/stores/map-data";
 
 const { t } = useI18n();
@@ -17,9 +17,8 @@ const mapData = storeToRefs(mapDataStore);
       v-model="activeTab"
       align="justify"
       dense
-      class="text-grey"
-      active-color="primary"
-      indicator-color="primary"
+      active-color="secondary"
+      indicator-color="secondary"
       narrow-indicator
     >
       <q-tab
@@ -112,6 +111,7 @@ const mapData = storeToRefs(mapDataStore);
 .q-tab {
   flex: 1 1 auto;
   padding: 0;
+  color: var(--text-on-sheet-2-faint);
 }
 
 .q-tab-panels {
@@ -146,8 +146,9 @@ const mapData = storeToRefs(mapDataStore);
     gap: 0.25rem;
 
     .detail {
+      background-color: var(--color-sheet-3);
       padding: 0.5rem 0.25rem;
-      --badge-width: 4ch;
+      --badge-width: calc(4ch + 4px);
     }
   }
 }

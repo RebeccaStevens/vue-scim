@@ -1,29 +1,75 @@
+@use "sass:map";
+
+$colors: (
+  "dark-faint": hsl(0, 0%, 40%),
+  "dark": hsl(0, 0%, 30%),
+  "darker": hsl(0, 0%, 15%),
+  "darkest": hsl(0, 0%, 7.5%),
+  "light-faint": hsl(0, 0%, 85%),
+  "light": hsl(0, 0%, 94%),
+  "lighter": hsl(0, 0%, 98%),
+  "lightest": hsl(0, 0%, 100%),
+  "q-positive": #21ba45,
+  "q-negative": #c10015,
+  "q-info": #31ccec,
+  "q-warning": #f2c037,
+  "q-dark": hsl(0, 0%, 15%),
+  "q-dark-page": hsl(0, 0%, 7.5%),
+  "ficsit-orange": #fa9549,
+  "ficsit-dark-blue-gray": #5f668c,
+  "ficsit-dark-gray": #5d5d5d,
+  "ficsit-silver-gray": #787878,
+  "ficsit-white": #ffffff,
+  "ficsit-pink": #ff00f7,
+);
+
+$swatches: (
+  "ficsit-factory-primary": (
+    "color": map.get($colors, "ficsit-orange"),
+    "prop": var(--color-ficsit-orange),
+  ),
+  "ficsit-factory-secondary": (
+    "color": map.get($colors, "ficsit-dark-blue-gray"),
+    "prop": var(--color-ficsit-dark-blue-gray),
+  ),
+  "ficsit-foundation-primary": (
+    "color": map.get($colors, "ficsit-dark-gray"),
+    "prop": var(--color-ficsit-dark-gray),
+  ),
+  "ficsit-foundation-secondary": (
+    "color": map.get($colors, "ficsit-silver-gray"),
+    "prop": var(--color-ficsit-silver-gray),
+  ),
+  "ficsit-concrete-primary": (
+    "color": map.get($colors, "ficsit-white"),
+    "prop": var(--color-ficsit-white),
+  ),
+  "ficsit-concrete-secondary": (
+    "color": map.get($colors, "ficsit-orange"),
+    "prop": var(--color-ficsit-orange),
+  ),
+  "ficsit-pipeline-primary": (
+    "color": map.get($colors, "ficsit-orange"),
+    "prop": var(--color-ficsit-orange),
+  ),
+  "ficsit-pipeline-secondary": (
+    "color": map.get($colors, "ficsit-pink"),
+    "prop": var(--color-ficsit-pink),
+  ),
+);
+
+$brand: (
+  "primary": map.get($swatches, "ficsit-factory-secondary"),
+  "secondary": map.get($swatches, "ficsit-factory-primary"),
+  "accent": map.get($swatches, "ficsit-factory-primary"),
+);
+
 :root {
-  --color-black: #121212;
-  --color-blackFull: #000000;
+  @each $key, $value in $colors {
+    --color-#{$key}: #{$value};
+  }
 
-  --color-white: #ededed;
-  --color-whiteFull: #ffffff;
-
-  --color-blue: #375a7f;
-  --color-cyan: #3498DB;
-  --color-danger: #E74C3C;
-  --color-dark: #303030;
-  --color-gray-dark: #303030;
-  --color-gray: #888;
-  --color-green: #00bc8c;
-  --color-indigo: #6610f2;
-  --color-info: #3498DB;
-  --color-light: #adb5bd;
-  --color-orange: #fd7e14;
-  --color-pink: #e83e8c;
-  --color-primary: #375a7f;
-  --color-purple: #6f42c1;
-  --color-red: #E74C3C;
-  --color-secondary: #444;
-  --color-success: #00bc8c;
-  --color-teal: #20c997;
-  --color-warning: #F39C12;
-  --color-white: #fff;
-  --color-yellow: #F39C12;
+  @each $key, $value in $swatches {
+    --color-#{$key}: #{map.get($value, "prop")};
+  }
 }

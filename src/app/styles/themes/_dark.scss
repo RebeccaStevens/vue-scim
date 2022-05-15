@@ -1,13 +1,15 @@
-@use  '../colors';
-
 :root.dark {
   --color-scheme: dark;
 
-  --q-primary: #1976D2;
-  --q-secondary: #26A69A;
-  --q-accent: #9C27B0;
-  --q-positive: #21BA45;
-  --q-negative: #C10015;
-  --q-info: #31CCEC;
-  --q-warning: #F2C037;
+  --color-sheet-1: var(--color-dark);
+  --text-on-sheet-1: var(--color-light);
+  --text-on-sheet-1-faint: var(--color-light-faint);
+
+  --color-sheet-2: var(--color-darker);
+  --text-on-sheet-2: var(--color-lighter);
+  --text-on-sheet-2-faint: var(--color-light);
+
+  --color-sheet-3: var(--color-darkest);
+  --text-on-sheet-3: var(--color-lightest);
+  --text-on-sheet-3-faint: var(--color-lighter);
 }

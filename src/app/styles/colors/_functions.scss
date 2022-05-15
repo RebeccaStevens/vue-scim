@@ -1,9 +1,17 @@
-@use "../../../../node_modules/@oddbird/blend";
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
 
-@mixin lchFrom($name, $from, $color, $l: 0%, $c: 0%, $h: 0%) {
-  #{$name}: blend.scale($color, $l: $l, $c: $c, $h: $h);
+@use "./common" as *;
 
-  @supports (color: lch(from black l c h)) {
-    #{$name}: #{"lch(from var(#{$from}), calc(l + #{$l}) calc(c + #{$c}) calc(h + #{$h}))"};
-  }
+@function get-color-and-prop($name) {
+  @return ("color": map.get($colors, $name), "prop": var(--color-#{$name}));
+}
+
+@function map-get-color($map) {
+  @return map.get($map, "color");
+}
+
+@function map-get-prop($map) {
+  @return #{map.get($map, "prop")};
 }

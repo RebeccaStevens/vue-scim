@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useMq } from "vue3-mq";
 
+const { t } = useI18n();
+const mq = useMq();
+
 const drawerRight = ref(true);
 const miniState = ref(false);
-
-const mq = useMq();
 </script>
 
 <template>
@@ -33,6 +34,7 @@ const mq = useMq();
             unelevated
             color="accent"
             icon="i-carbon-chevron-left"
+            :title="t('pages.interactive-map.controls.buttons.open.title')"
             @click="miniState = false"
           />
         </div>
@@ -49,6 +51,7 @@ const mq = useMq();
           unelevated
           color="accent"
           icon="i-carbon-chevron-right"
+          :title="t('pages.interactive-map.controls.buttons.close.title')"
           @click="miniState = true"
         />
       </div>
@@ -88,7 +91,7 @@ $toolbarHeight: 50px;
 }
 
 .control-drawer-mini {
-  background-color: darkgray;
+  background-color: var(--color-sheet-2);
 }
 
 .drawer-state-expand,
@@ -111,9 +114,9 @@ $toolbarHeight: 50px;
 }
 
 .drawer-state-collapse {
-  left: -1rem;
+  left: -0.92rem;
   &.dense {
-    left: -2rem;
+    left: -0.67rem;
   }
 }
 

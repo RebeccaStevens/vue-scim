@@ -1,0 +1,13 @@
+@each $type in (primary, secondary, accent) {
+  .bg-#{$type} {
+    background-color: var(--q-#{$type});
+    color: var(--text-on-#{$type});
+  }
+}
+
+@each $var in (1, 2, 3) {
+  .bg-sheet-#{$var} {
+    background-color: var(--color-sheet-#{$var});
+    color: var(--text-on-sheet-#{$var});
+  }
+}

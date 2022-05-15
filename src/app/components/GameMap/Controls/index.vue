@@ -10,7 +10,7 @@
       <ActionButtons />
     </q-card>
 
-    <q-card>
+    <q-card class="bg-sheet-2">
       <StaticElementButtons />
     </q-card>
 

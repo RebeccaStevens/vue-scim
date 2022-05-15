@@ -13,7 +13,26 @@
 }
 
 .q-btn,
+.q-item,
 .q-tab,
 .q-toggle {
   text-transform: capitalize;
+}
+
+.q-tab-panels {
+  background-color: transparent;
+}
+
+.q-badge {
+  background-color: var(--q-secondary);
+  color: var(--color-lightest);
+  letter-spacing: 0.33px;
+  text-shadow: -0.5px -0.5px var(--color-dark-faint),
+    0.5px -0.5px var(--color-dark-faint), -0.5px 0.5px var(--color-dark-faint),
+    0.5px 0.5px var(--color-dark-faint);
+}
+
+.q-footer {
+  background-color: var(--color-sheet-1);
+  color: var(--text-on-sheet-1);
 }

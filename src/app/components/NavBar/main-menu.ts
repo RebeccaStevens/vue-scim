@@ -1,6 +1,16 @@
+import * as icons from "~/icons";
+
 type MenuLink = Readonly<{
   type: "link";
   label: string;
+  link: string;
+}>;
+
+type MenuImageLink = Readonly<{
+  type: "image-link";
+  srcset: string;
+  ratio: number;
+  title: string;
   link: string;
 }>;
 
@@ -14,16 +24,17 @@ type SubMenu = Readonly<{
   submenu?: ReadonlyArray<MenuLink | MenuDivider>;
 }>;
 
-type MainMenuData = ReadonlyArray<SubMenu | MenuLink>;
+type MainMenuData = ReadonlyArray<SubMenu | MenuLink | MenuImageLink>;
 
 export function useMainMenu() {
   const { t } = useI18n();
 
   const menu: MainMenuData = [
     {
-      type: "link",
-      label: t("pages.home.label"),
-
+      type: "image-link",
+      srcset: icons.calculatorLogo,
+      ratio: 192 / 44,
+      title: t("pages.home.title"),
       link: "/",
     },
     {

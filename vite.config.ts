@@ -275,23 +275,39 @@ function autoImageIndex() {
   const imageFormats = getImageFormats();
 
   // eslint-disable-next-line unicorn/consistent-function-scoping
-  const getIndexContent = (dirContent: Dirent[], relRoot: string) => {
-    const content = dirContent
-      .map((dirent) => {
+  const getIndexContent = async (
+    dirContent: Dirent[],
+    relRoot: string,
+    baseDir: string
+  ) => {
+    const content = await Promise.all(
+      dirContent.map(async (dirent) => {
         if (dirent.isDirectory()) {
-          return `export * as ${dirent.name} from "./${dirent.name}";\n`;
+          const { name } = path.parse(dirent.name);
+          return `import ${name} from "./${name}";\nfor (const [name, image] of ${name}) {\n  images.set(name, image);\n}\nexport * as ${name} from "./${name}";\n`;
         }
         if (dirent.isFile()) {
-          const { name, ext } = path.parse(dirent.name);
+          const { name, ext, dir, base } = path.parse(dirent.name);
 
           if (ext === ".ts") {
             return undefined;
           }
 
-          const dims = [32, 64, 128, 256];
+          const imageMetadata = await sharp(
+            path.join(baseDir, dir, base)
+          ).metadata();
+          const nativeWidth = imageMetadata.width;
+
+          const widths = [
+            ...new Set([32, 64, 128, 256, nativeWidth]).values(),
+          ].filter(
+            (width) =>
+              width !== undefined &&
+              width <= (nativeWidth ?? Number.POSITIVE_INFINITY)
+          );
 
           const importsData = imageFormats.flatMap((format) =>
-            dims.map((size) => {
+            widths.map((size) => {
               const queryString = `${new URLSearchParams({
                 format,
                 width: String(size),
@@ -319,35 +335,21 @@ function autoImageIndex() {
             )
             .join(", ")}]);\n`;
 
-          return `${imports.join("")}${exports}`;
+          return `${imports.join(
+            ""
+          )}${exports}images.set("${name}", ${name})\n`;
         }
         return undefined;
       })
-      .filter(<T>(i: T | undefined): i is T => i !== undefined);
+    );
 
-    return `/// <reference types="${relRoot}/types" />\nimport { createSrcset } from "~/utils";\n\n${content.join(
+    const safeContent = content.filter(
+      <T>(i: T | undefined): i is T => i !== undefined
+    );
+
+    return `/// <reference types="${relRoot}/types" />\nimport { createSrcset } from "~/utils";\n\nconst images = new Map<string, string>();\nexport default images;\n\n${safeContent.join(
       "\n"
     )}`;
-  };
-
-  const createForSubDir = async (dir: string, relRoot: string) => {
-    const dirContent = await fs.readdir(dir, {
-      withFileTypes: true,
-    });
-
-    const subDirs = dirContent
-      .filter((dirent) => dirent.isDirectory())
-      .map((dirent) => dirent.name);
-
-    const indexContent = getIndexContent(dirContent, relRoot);
-
-    const indexPath = path.join(dir, "index.ts");
-    await fs.writeFile(indexPath, indexContent, { encoding: "utf8" });
-    await Promise.all(
-      subDirs.map((subDir) =>
-        createForSubDir(path.join(dir, subDir), `${relRoot}/..`)
-      )
-    );
   };
 
   const createForDir = async (dir: string, relRoot: string) => {
@@ -359,21 +361,13 @@ function autoImageIndex() {
       .filter((dirent) => dirent.isDirectory())
       .map((dirent) => dirent.name);
 
-    const indexContent = `${subDirs
-      .map((name) => `import * as ${name} from "./${name}";\n`)
-      .filter(<T>(i: T | undefined): i is T => i !== undefined)
-      .join("\n")}\n\nconst icons = new Map<string, string>();\n${subDirs
-      .map(
-        (name) =>
-          `for (const [name, icon] of Object.entries(${name})) {\n  icons.set(name, icon)\n}`
-      )
-      .join("\n")}\nexport default icons;\nexport { ${subDirs.join(", ")} }\n`;
+    const indexContent = await getIndexContent(dirContent, relRoot, dir);
 
     const indexPath = path.join(dir, "index.ts");
     await fs.writeFile(indexPath, indexContent, { encoding: "utf8" });
     await Promise.all(
       subDirs.map((subDir) =>
-        createForSubDir(path.join(dir, subDir), `${relRoot}/..`)
+        createForDir(path.join(dir, subDir), `${relRoot}/..`)
       )
     );
   };

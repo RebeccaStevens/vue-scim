@@ -1,0 +1,35 @@
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
+
+@use "../../../../node_modules/@oddbird/blend";
+
+@use "../functions" as *;
+
+@use "./consts" as *;
+@use "./functions" as *;
+
+@mixin lchFrom($property, $from, $color, $l: 0%, $c: 0%, $h: 0%) {
+  #{$property}: blend.scale($color, $l: $l, $c: $c, $h: $h);
+
+  @supports (color: lch(from black l c h)) {
+    #{$property}: #{"lch(from var(#{$from}), calc(l + #{$l}) calc(c + #{$c}) calc(h + #{$h}))"};
+  }
+}
+
+@mixin color-contrast($property, $colorMap, $optionsMap, $ratio: $contrastAA) {
+  #{$property}: blend.contrast(
+    map.get($colorMap, "color"),
+    list.join(f-apply(meta.get-function(map-get-color), $optionsMap), ($ratio))...
+  );
+
+  @supports (color: color-contrast(black vs black, white to AA)) {
+    #{$property}: #{color-contrast(
+        var(#{map.get($colorMap, "prop")}) vs #{list.join(
+            f-apply(meta.get-function(map-get-prop), $optionsMap),
+            (),
+            comma
+          )} to #{$ratio}
+      )};
+  }
+}
