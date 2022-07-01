@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.13.6",
-    "@unocss/reset": "^0.33.2",
+    "@unocss/reset": "^0.42.0",
     "@vueuse/core": "^8.4.2",
     "@vueuse/head": "^0.7.6",
     "iter-ops": "^1.6.2",
